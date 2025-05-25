@@ -1,3 +1,39 @@
 <resources>
     <string name="app_name">gamemology</string>
+
+
+    <!-- Bottom Navigation -->
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+
+    <!-- Search -->
+    <string name="search">Search</string>
+    <string name="search_games">Search Games</string>
+    <string name="search_hint">Enter game name…</string>
+    <string name="no_results_found">No results found</string>
+    <string name="error_searching_games">Error searching games</string>
+
+    <!-- Game Details -->
+    <string name="game_banner">Game Banner</string>
+    <string name="game_image">Game Image</string>
+    <string name="game_screenshot">Game Screenshot</string>
+    <string name="favorite_button">Favorite Button</string>
+    <string name="genres">Genres</string>
+    <string name="platforms">Platforms</string>
+    <string name="screenshots">Screenshots</string>
+    <string name="description">Description</string>
+    <string name="released_date">Released: %s</string>
+    <string name="rating">%1$.1f</string>
+
+    <!-- Favorites -->
+    <string name="added_to_favorites">Added to favorites</string>
+    <string name="removed_from_favorites">Removed from favorites</string>
+    <string name="no_favorites">No favorite games yet</string>
+
+    <!-- Errors -->
+    <string name="network_error">No internet connection</string>
+    <string name="error_loading_games">Failed to load games</string>
+    <string name="error_loading_game_details">Failed to load game details</string>
+    <string name="error_game_not_found">Game not found</string>
+    <string name="no_games_found">No games found</string>
 </resources>

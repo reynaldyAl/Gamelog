@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+<!-- Text Styles -->
+<style name="TextAppearance.App.Title" parent="TextAppearance.MaterialComponents.Headline5">
+    <item name="android:textStyle">bold</item>
+</style>
+
+<style name="TextAppearance.App.TitleLarge" parent="TextAppearance.MaterialComponents.Headline4">
+    <item name="android:textStyle">bold</item>
+</style>
+
+<style name="TextAppearance.App.Subtitle" parent="TextAppearance.MaterialComponents.Subtitle1">
+    <item name="android:textStyle">bold</item>
+</style>
+</resources>
