@@ -16,7 +16,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Define API key directly
-        buildConfigField("String", "RAWG_API_KEY", "\"YOUR_RAWG_API_KEY_HERE\"")
+        buildConfigField("String", "RAWG_API_KEY", "\"03d5b08e640a4ba08c2d8dffa0f5ebae\"")
     }
 
     buildTypes {
@@ -68,6 +68,12 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation(libs.runner)
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    // PhotoView for image zoom functionality
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
+
+    // SplashScreen API (only need this once)
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Testing
     testImplementation(libs.junit)

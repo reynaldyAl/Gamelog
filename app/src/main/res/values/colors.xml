@@ -2,4 +2,47 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- Base colors -->
+
+
+    <!-- Primary palette - inspired by Steam's blue -->
+    <color name="primary">#1A9FFF</color>
+    <color name="primary_dark">#0D84E3</color>
+    <color name="primary_light">#64C1FF</color>
+
+    <!-- Accent color - contrasting orange -->
+    <color name="accent">#FF7D1A</color>
+    <color name="accent_dark">#E56200</color>
+    <color name="accent_light">#FFA064</color>
+
+    <!-- Light theme colors -->
+    <color name="background_light">#F8F9FA</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="error_light">#B00020</color>
+    <color name="text_primary_light">#202124</color>
+    <color name="text_secondary_light">#5F6368</color>
+    <color name="divider_light">#DADCE0</color>
+    <color name="ripple_light">#1F000000</color>
+
+    <!-- Dark theme colors -->
+    <color name="primary_dark_theme">#64C1FF</color>
+    <color name="primary_dark_variant">#1A9FFF</color>
+    <color name="accent_dark_theme">#FFA064</color>
+    <color name="accent_dark_variant">#FF7D1A</color>
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="error_dark">#CF6679</color>
+    <color name="text_primary_dark">#E8EAED</color>
+    <color name="text_secondary_dark">#9AA0A6</color>
+    <color name="divider_dark">#5F6368</color>
+    <color name="ripple_dark">#33FFFFFF</color>
+
+    <!-- Rating colors -->
+    <color name="rating_excellent">#4CAF50</color>
+    <color name="rating_good">#8BC34A</color>
+    <color name="rating_average">#FFC107</color>
+    <color name="rating_poor">#FF9800</color>
+    <color name="rating_bad">#F44336</color>
+
+    <color name="secondary">@color/accent</color>
 </resources>
