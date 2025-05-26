@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="80dp"
+    android:viewportWidth="320"
+    android:viewportHeight="80">
+    <!-- You can replace this with your app name or branding -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,40L280,40"
+        android:strokeWidth="4"
+        android:strokeColor="#FFFFFF"/>
+</vector>

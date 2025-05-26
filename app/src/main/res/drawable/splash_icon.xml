@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- You can replace this with your app icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,30L78,54L66,66L54,54L42,66L30,54L54,30Z"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,58L66,70L54,82L42,70L54,58Z"/>
+</vector>
