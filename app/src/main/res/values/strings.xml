@@ -107,4 +107,6 @@
     <!-- load search -->
     <string name="loading">Loading…</string>
 
+    <string name="offline_no_cache">Tidak ada data tersimpan untuk mode offline</string>
+
 </resources>
