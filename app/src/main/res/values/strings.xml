@@ -82,6 +82,10 @@
     <string name="about_app_message">Gamemology is a comprehensive gaming catalog app that helps you discover and explore games from various platforms.\n\nData provided by RAWG.io API.</string>
     <string name="ok">OK</string>
 
+    <!-- store -->
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="unknown_store">Unknown Store</string>
+
     <string name="full_image">Full image</string>
     <string name="error_loading_image">Failed to load image</string>
 </resources>

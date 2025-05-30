@@ -2,6 +2,7 @@ package com.example.gamemology.ui.detail.tabs;
 
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.example.gamemology.databinding.FragmentAboutBinding;
 import com.example.gamemology.models.Game;
 import com.example.gamemology.utils.Constants;
 import com.google.android.material.chip.Chip;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -90,21 +93,60 @@ public class AboutFragment extends Fragment {
         }
     }
 
+    // Replace only the loadGameStores method
     private void loadGameStores(int gameId) {
+        Log.d("AboutFragment", "Loading stores for game ID: " + gameId);
+
         Call<StoreResponse> call = apiService.getGameStores(gameId);
         call.enqueue(new Callback<StoreResponse>() {
             @Override
             public void onResponse(@NonNull Call<StoreResponse> call, @NonNull Response<StoreResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
-                    if (!response.body().getResults().isEmpty()) {
-                        StoreAdapter adapter = new StoreAdapter(requireContext(), response.body().getResults());
+                if (response.isSuccessful() && response.body() != null) {
+                    List<StoreResponse.StoreItem> results = response.body().getResults();
+
+                    if (results != null && !results.isEmpty()) {
+                        Log.d("AboutFragment", "Received " + results.size() + " stores");
+
+                        // Debug the received store data
+                        for (int i = 0; i < results.size(); i++) {
+                            StoreResponse.StoreItem item = results.get(i);
+                            if (item != null && item.getStore() != null) {
+                                Log.d("AboutFragment", "Store " + i + ": " +
+                                        "id=" + item.getId() +
+                                        ", name=" + item.getStore().getName() +
+                                        ", slug=" + item.getStore().getSlug() +
+                                        ", url=" + item.getUrl());
+                            } else {
+                                Log.e("AboutFragment", "Store " + i + " is null or invalid");
+                            }
+                        }
+
+                        // Create and set adapter
+                        StoreAdapter adapter = new StoreAdapter(requireContext(), results);
                         binding.rvStores.setLayoutManager(new LinearLayoutManager(requireContext()));
                         binding.rvStores.setAdapter(adapter);
+
+                        // Make UI elements visible
+                        binding.tvStoresTitle.setVisibility(View.VISIBLE);
+                        binding.rvStores.setVisibility(View.VISIBLE);
                     } else {
+                        Log.d("AboutFragment", "No stores available for this game");
                         binding.tvStoresTitle.setVisibility(View.GONE);
                         binding.rvStores.setVisibility(View.GONE);
                     }
                 } else {
+                    int errorCode = response.code();
+                    String errorBody = null;
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        Log.e("AboutFragment", "Error reading error body: " + e.getMessage());
+                    }
+
+                    Log.e("AboutFragment", "Failed to load stores. Code: " + errorCode +
+                            ", Error: " + errorBody);
                     binding.tvStoresTitle.setVisibility(View.GONE);
                     binding.rvStores.setVisibility(View.GONE);
                 }
@@ -112,15 +154,10 @@ public class AboutFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<StoreResponse> call, @NonNull Throwable t) {
+                Log.e("AboutFragment", "Network error loading stores: " + t.getMessage(), t);
                 binding.tvStoresTitle.setVisibility(View.GONE);
                 binding.rvStores.setVisibility(View.GONE);
             }
         });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 }

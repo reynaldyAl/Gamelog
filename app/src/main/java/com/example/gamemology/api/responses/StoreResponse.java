@@ -1,6 +1,7 @@
 package com.example.gamemology.api.responses;
 
 import com.google.gson.annotations.SerializedName;
+import com.example.gamemology.utils.StoreIdMapping;
 
 import java.util.List;
 
@@ -38,40 +39,55 @@ public class StoreResponse {
         @SerializedName("id")
         private int id;
 
+        @SerializedName("game_id")
+        private int gameId;
+
+        @SerializedName("store_id")
+        private int storeId;
+
         @SerializedName("url")
         private String url;
 
-        @SerializedName("store")
-        private Store store;
-
         public int getId() {
             return id;
+        }
+
+        public int getGameId() {
+            return gameId;
+        }
+
+        public int getStoreId() {
+            return storeId;
         }
 
         public String getUrl() {
             return url;
         }
 
+        /**
+         * Gets store information based on the store_id
+         * @return Store information object
+         */
         public Store getStore() {
-            return store;
+            return StoreIdMapping.getStoreById(storeId);
         }
     }
 
     public static class Store {
-        @SerializedName("id")
         private int id;
-
-        @SerializedName("name")
         private String name;
-
-        @SerializedName("slug")
         private String slug;
-
-        @SerializedName("domain")
         private String domain;
-
-        @SerializedName("image_background")
         private String imageBackground;
+
+        /**
+         * Constructor for creating Store objects in StoreIdMapping
+         */
+        public Store(int id, String name, String slug) {
+            this.id = id;
+            this.name = name;
+            this.slug = slug;
+        }
 
         public int getId() {
             return id;
