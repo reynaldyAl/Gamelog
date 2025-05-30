@@ -1,7 +1,33 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <style name="Theme.Gamemology" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/primary_dark_theme</item>
+        <item name="colorPrimaryVariant">@color/primary_dark_variant</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/accent_dark_theme</item>
+        <item name="colorSecondaryVariant">@color/accent_dark_variant</item>
+        <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Status bar and navigation bar -->
+        <item name="android:statusBarColor">@color/dark_surface</item>
+        <item name="android:navigationBarColor">@color/dark_surface</item>
+
+        <!-- Background colors -->
+        <item name="backgroundColor">@color/dark_background</item>
+        <item name="colorSurface">@color/dark_surface</item>
+        <item name="colorOnBackground">@color/text_primary_dark</item>
+        <item name="colorOnSurface">@color/text_secondary_dark</item>
+
+        <!-- Typography and components inherit from the light theme -->
+
+        <!-- Make edge-to-edge layout work better -->
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <!-- Base theme definition -->
     <style name="Base.Theme.Gamemology" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <!-- Customize your dark theme here -->
     </style>
 </resources>

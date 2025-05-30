@@ -64,7 +64,8 @@
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/img_game"
-            tools:text="4.5" />
+            tools:text="4.5"
+            tools:ignore="UseCompatTextViewDrawableXml" />
 
         <ImageView
             android:id="@+id/img_favorite"
@@ -77,7 +78,8 @@
             android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/txt_title"
-            app:srcCompat="@drawable/ic_favorite_border" />
+            app:srcCompat="@drawable/ic_favorite_border"
+            tools:ignore="TouchTargetSizeCheck,RedundantDescriptionCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

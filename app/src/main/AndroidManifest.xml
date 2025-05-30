@@ -16,22 +16,39 @@
         android:theme="@style/Theme.Gamemology"
         tools:targetApi="31">
 
+        <!-- SplashActivity as launcher -->
         <activity
-            android:name=".ui.MainActivity"
-            android:exported="true">
+            android:name=".ui.splash.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Gamemology.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Main Activity (no longer needs splash theme) -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Gamemology" />
+
+        <!-- Other activities remain the same -->
         <activity
             android:name=".ui.detail.DetailActivity"
-            android:parentActivityName=".ui.MainActivity" />
+            android:theme="@style/Theme.Gamemology" />
 
         <activity
             android:name=".ui.search.SearchActivity"
-            android:parentActivityName=".ui.MainActivity" />
+            android:theme="@style/Theme.Gamemology" />
+
+        <activity
+            android:name=".ui.browse.BrowseActivity"
+            android:theme="@style/Theme.Gamemology" />
+
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:theme="@style/Theme.Gamemology" />
 
     </application>
 

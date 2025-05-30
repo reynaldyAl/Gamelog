@@ -16,9 +16,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Add JitPack repository for PhotoView library
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
 rootProject.name = "gamemology"
 include(":app")
- 

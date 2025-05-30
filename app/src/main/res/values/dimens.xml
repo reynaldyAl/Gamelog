@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Media fragment dimensions -->
+    <dimen name="screenshots_recycler_height">400dp</dimen>
+    <dimen name="trailers_recycler_height">300dp</dimen>
+</resources>

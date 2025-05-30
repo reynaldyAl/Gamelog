@@ -1,8 +1,12 @@
 package com.example.gamemology.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class Game {
+public class Game implements Parcelable {
     private int id;
     private String name;
     private String released;
@@ -28,7 +32,52 @@ public class Game {
         this.description = description;
     }
 
-    // Getters and setters
+    // Parcelable implementation
+    protected Game(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        released = in.readString();
+        backgroundImage = in.readString();
+        rating = in.readDouble();
+        description = in.readString();
+        genres = in.createStringArrayList();
+        platforms = in.createStringArrayList();
+        screenshots = in.createTypedArrayList(Screenshot.CREATOR);
+        isFavorite = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeString(released);
+        dest.writeString(backgroundImage);
+        dest.writeDouble(rating);
+        dest.writeString(description);
+        dest.writeStringList(genres);
+        dest.writeStringList(platforms);
+        dest.writeTypedList(screenshots);
+        dest.writeByte((byte) (isFavorite ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Game> CREATOR = new Creator<Game>() {
+        @Override
+        public Game createFromParcel(Parcel in) {
+            return new Game(in);
+        }
+
+        @Override
+        public Game[] newArray(int size) {
+            return new Game[size];
+        }
+    };
+
+    // Existing getters and setters
     public int getId() {
         return id;
     }
