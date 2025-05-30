@@ -88,4 +88,23 @@
 
     <string name="full_image">Full image</string>
     <string name="error_loading_image">Failed to load image</string>
+
+    <!-- Additional resources needed for advanced search -->
+    <string name="filter_games">Filter Games</string>
+    <string name="release_date">Release Date</string>
+    <string name="from_year">From Year</string>
+    <string name="to_year">To Year</string>
+    <string name="minimum_rating">Minimum Rating</string>
+    <string name="reset">Reset</string>
+    <string name="apply">Apply</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="newest">Newest</string>
+    <string name="highest_rated">Highest Rated</string>
+    <string name="name_a_z">Name A-Z</string>
+    <string name="name_z_a">Name Z-A</string>
+    <string name="filter">Filter</string>
+
+    <!-- load search -->
+    <string name="loading">Loading…</string>
+
 </resources>

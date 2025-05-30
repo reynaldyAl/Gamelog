@@ -22,23 +22,121 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <SearchView
-        android:id="@+id/searchView"
+    <!-- Search and Filter Container -->
+    <LinearLayout
+        android:id="@+id/search_filter_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:iconifiedByDefault="false"
-        android:queryHint="@string/search_hint"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_search_results"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
+        android:orientation="horizontal"
         android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:iconifiedByDefault="false"
+            android:queryHint="@string/search_hint" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_filter"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:text="@string/filter"
+            app:icon="@drawable/ic_filter"
+            app:iconGravity="textStart" />
+    </LinearLayout>
+
+    <!-- Sort Options -->
+    <HorizontalScrollView
+        android:id="@+id/sort_options_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:paddingHorizontal="8dp"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@+id/search_filter_container">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleLine="true"
+            app:singleSelection="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_popular"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/most_popular" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_newest"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/newest" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_highest_rated"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/highest_rated" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_name_asc"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name_a_z" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_name_desc"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name_z_a" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <!-- Active Filters -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_active_filters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="4dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sort_options_container"
+        tools:visibility="visible" />
+
+    <!-- Search Results -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchView"
-        tools:listitem="@layout/item_game" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chip_group_active_filters">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_search_results"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            tools:listitem="@layout/item_game" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <TextView
         android:id="@+id/tv_no_results"
@@ -50,7 +148,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchView" />
+        app:layout_constraintTop_toBottomOf="@id/chip_group_active_filters" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -60,6 +158,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchView" />
+        app:layout_constraintTop_toBottomOf="@id/chip_group_active_filters" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
