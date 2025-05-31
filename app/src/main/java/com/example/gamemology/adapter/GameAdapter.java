@@ -137,5 +137,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
             imgFavorite.setImageResource(game.isFavorite() ?
                     R.drawable.ic_favorite : R.drawable.ic_favorite_border);
         }
+
+
     }
 }

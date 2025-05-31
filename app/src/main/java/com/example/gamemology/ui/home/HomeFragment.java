@@ -2,6 +2,7 @@ package com.example.gamemology.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,20 +22,17 @@ import com.example.gamemology.databinding.FragmentHomeBinding;
 import com.example.gamemology.models.Game;
 import com.example.gamemology.ui.detail.DetailActivity;
 import com.example.gamemology.utils.Constants;
-import com.example.gamemology.utils.NetworkUtils;
+import com.example.gamemology.utils.LoadState;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class HomeFragment extends Fragment {
+    private static final String TAG = "HomeFragment";
 
     private FragmentHomeBinding binding;
     private GameAdapter gameAdapter;
     private HomeViewModel viewModel;
     private DatabaseHelper dbHelper;
-    private boolean isLoading = false;
-    private boolean hasMoreData = true;
-    private int currentPage = 1;
 
     @Nullable
     @Override
@@ -59,25 +57,60 @@ public class HomeFragment extends Fragment {
         // Setup SwipeRefreshLayout
         binding.swipeRefresh.setOnRefreshListener(this::refreshData);
 
-        // Observe loading state
-        viewModel.getIsLoading().observe(getViewLifecycleOwner(), loading -> {
-            isLoading = loading;
-            binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+        // Observe games result from ViewModel
+        viewModel.getGamesResult().observe(getViewLifecycleOwner(), result -> {
+            Log.d(TAG, "Games result updated: state=" + result.getState());
+
+            // Handle different states
+            if (result.getState() == LoadState.LOADING) {
+                showLoading(true);
+                hideLoadMoreProgress();
+            } else if (result.getState() == LoadState.LOADING_MORE) {
+                showLoadMoreProgress();
+            } else {
+                // Hide all loading indicators
+                showLoading(false);
+                hideLoadMoreProgress();
+                binding.swipeRefresh.setRefreshing(false);
+
+                if (result.isSuccess()) {
+                    // Data loaded successfully
+                    if (result.getData() != null && !result.getData().isEmpty()) {
+                        Log.d(TAG, "Setting " + result.getData().size() + " games to adapter");
+                        gameAdapter.setGames(result.getData());
+                        showContent();
+                    } else {
+                        showEmptyView();
+                    }
+                } else if (result.isError()) {
+                    // Show error
+                    Toast.makeText(requireContext(),
+                            result.getErrorMessage() != null ? result.getErrorMessage() : getString(R.string.error_loading_games),
+                            Toast.LENGTH_SHORT).show();
+
+                    // Show empty view if we have no data
+                    if (gameAdapter.getItemCount() == 0) {
+                        showEmptyView();
+                    }
+                }
+            }
         });
 
         // Load initial data
-        loadGamesPage(1);
-
-        // Show loading indicator initially
-        binding.progressBar.setVisibility(View.VISIBLE);
+        viewModel.loadFirstPage();
     }
 
     private void setupRecyclerView() {
+        Log.d(TAG, "Setting up RecyclerView");
         gameAdapter = new GameAdapter(requireContext());
+
+        // Initialize with empty list
+        gameAdapter.setGames(new ArrayList<>());
+
         binding.rvGames.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvGames.setAdapter(gameAdapter);
 
-        // Set up item click listener
+        // Setup item click listeners
         gameAdapter.setOnItemClickListener(new GameAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Game game) {
@@ -95,16 +128,17 @@ public class HomeFragment extends Fragment {
                     dbHelper.removeGameFromFavorites(game.getId());
                     Toast.makeText(requireContext(), getString(R.string.removed_from_favorites), Toast.LENGTH_SHORT).show();
                 }
-                // Update favorite status in adapter
-                gameAdapter.notifyDataSetChanged();
             }
         });
 
-        // Setup pagination
+        // Setup pagination with scroll listener
         binding.rvGames.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
+                // Skip when scrolling up
+                if (dy <= 0) return;
 
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 if (layoutManager != null) {
@@ -112,78 +146,33 @@ public class HomeFragment extends Fragment {
                     int totalItemCount = layoutManager.getItemCount();
                     int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-                    if (!isLoading && hasMoreData) {
-                        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                                && firstVisibleItemPosition >= 0) {
-                            // Load more data
-                            loadMoreGames();
-                        }
+                    // Check if near the end of the list
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 5
+                            && firstVisibleItemPosition >= 0) {
+                        // Load more data
+                        viewModel.loadNextPage();
                     }
                 }
             }
         });
-    }
-
-    private void loadGamesPage(int page) {
-        currentPage = page;
-
-        // Start with loading indicator for page 1
-        if (page == 1) {
-            binding.progressBar.setVisibility(View.VISIBLE);
-        } else {
-            binding.loadMoreProgress.setVisibility(View.VISIBLE);
-        }
-
-        // Get page from repository through ViewModel
-        String category = "home_page_" + page;
-        viewModel.loadGamesForPage(page, category).observe(getViewLifecycleOwner(), result -> {
-            // Hide loading indicators
-            binding.progressBar.setVisibility(View.GONE);
-            binding.loadMoreProgress.setVisibility(View.GONE);
-            binding.swipeRefresh.setRefreshing(false);
-
-            if (result != null) {
-                List<Game> games = result.first;
-                hasMoreData = result.second;
-
-                if (games != null && !games.isEmpty()) {
-                    if (page == 1) {
-                        // Fresh data
-                        gameAdapter.setGames(games);
-                        binding.rvGames.scrollToPosition(0);
-                        hideEmptyView();
-                    } else {
-                        // Pagination data
-                        gameAdapter.addGames(games);
-                    }
-                } else if (page == 1) {
-                    showEmptyView();
-                }
-            } else {
-                // No result from repository
-                if (page == 1) {
-                    // Only show empty view for first page failure
-                    showEmptyView();
-                }
-
-                // If we're offline with no cache, show a friendly message
-                if (!NetworkUtils.isNetworkAvailable(requireContext())) {
-                    Toast.makeText(requireContext(), R.string.offline_no_cache, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void loadMoreGames() {
-        if (isLoading || !hasMoreData) return;
-        loadGamesPage(currentPage + 1);
     }
 
     private void refreshData() {
+        Log.d(TAG, "Refreshing data");
         binding.swipeRefresh.setRefreshing(true);
-        // Force refresh from network
         viewModel.refreshGames();
-        loadGamesPage(1);
+    }
+
+    private void showLoading(boolean show) {
+        binding.progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void showLoadMoreProgress() {
+        binding.loadMoreProgress.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoadMoreProgress() {
+        binding.loadMoreProgress.setVisibility(View.GONE);
     }
 
     private void showEmptyView() {
@@ -191,7 +180,7 @@ public class HomeFragment extends Fragment {
         binding.rvGames.setVisibility(View.GONE);
     }
 
-    private void hideEmptyView() {
+    private void showContent() {
         binding.emptyView.setVisibility(View.GONE);
         binding.rvGames.setVisibility(View.VISIBLE);
     }
