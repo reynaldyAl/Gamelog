@@ -15,6 +15,15 @@
     <color name="accent_dark">#E56200</color>
     <color name="accent_light">#FFA064</color>
 
+    <!-- Update these colors for a more appealing UI -->
+    <color name="chat_background">#121212</color>
+    <color name="chat_input_background">#1E1E1E</color>
+    <color name="ai_message_background">#232323</color>
+    <color name="user_message_background">#1A73E8</color>
+
+    <color name="text_primary">#F0F0F0</color>
+    <color name="text_secondary">#B3B3B3</color>
+
     <!-- Light theme colors -->
     <color name="background_light">#F8F9FA</color>
     <color name="surface_light">#FFFFFF</color>
@@ -51,4 +60,12 @@
     <color name="shimmer_highlight">#EEEEEE</color>
 
     <color name="colorWarning">#FF9800</color>  <!-- Orange warning color -->
+
+    <!-- Add these colors -->
+
+    <color name="user_message_text">@color/white</color>
+
+    <color name="ai_message_text">@color/black</color>
+
+
 </resources>

@@ -51,6 +51,13 @@
             android:name=".ui.settings.SettingsActivity"
             android:theme="@style/Theme.Gamemology" />
 
+        <!-- Add this to your AndroidManifest.xml inside the <application> tag -->
+        <activity
+            android:name=".ai.GameAssistantActivity"
+            android:label="@string/game_assistant"
+            android:parentActivityName=".ui.MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

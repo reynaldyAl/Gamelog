@@ -50,6 +50,14 @@
             app:iconGravity="textStart" />
     </LinearLayout>
 
+    <!-- AI Search Controls Container - ADDED -->
+    <FrameLayout
+        android:id="@+id/search_controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintTop_toBottomOf="@id/search_filter_container"/>
+
     <!-- Sort Options -->
     <HorizontalScrollView
         android:id="@+id/sort_options_container"
@@ -58,7 +66,7 @@
         android:clipToPadding="false"
         android:paddingHorizontal="8dp"
         android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@+id/search_filter_container">
+        app:layout_constraintTop_toBottomOf="@+id/search_controls_container">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chip_group_sort"
