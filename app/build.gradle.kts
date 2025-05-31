@@ -81,4 +81,16 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+    // Gemini AI dependencies - sudah lengkap
+    implementation("com.google.ai.client.generativeai:generativeai:0.2.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("com.google.guava:guava:32.1.2-jre")
+
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("io.noties.markwon:html:4.6.2")
+    implementation("io.noties.markwon:image:4.6.2")
+    implementation("io.noties.markwon:ext-tables:4.6.2")
+    implementation("androidx.emoji:emoji:1.1.0")
 }

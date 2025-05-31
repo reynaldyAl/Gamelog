@@ -119,4 +119,27 @@
     <string name="tap_to_retry">Tap to retry</string>
     <string name="please_reconnect">Please check your internet connection and try again.</string>
 
+    <!-- Add these strings -->
+    <string name="game_assistant">Game Assistant</string>
+    <string name="welcome_message">Hi! I\'m your Gamemology AI assistant. Penasaran sama game apa nich!?? coba tanya aja semuaa</string>
+    <string name="ask_about_games">Ask about games...</string>
+    <string name="send">Send</string>
+    <string name="gemini_assistant">Gemini Assistant</string>
+    <string name="context_game">Context: %s</string>
+    <string name="ai_error_message">Sorry, I couldn\'t process your request. Please try again.</string>
+    <string name="ai_search">AI-Powered Search</string>
+    <string name="ai_search_hint">Ask about games in natural language...</string>
+
+    <string name="analyzing_query">Analyzing your query...</string>
+    <string name="ai_search_interpretation">Showing: %s</string>
+    <string name="ai_search_fallback">AI search unavailable, using standard search</string>
+    <string name="powered_by_gemini">Powered by Gemini AI</string>
+
+    <string name="ask_ai">Ask AI about this game</string>
+    <string name="error_game_data_not_loaded">Game data not fully loaded yet</string>
+
+
+    <string name="ask_about_game">Ask about this game...</string>
+    <string name="send_message">Send message</string>
+
 </resources>

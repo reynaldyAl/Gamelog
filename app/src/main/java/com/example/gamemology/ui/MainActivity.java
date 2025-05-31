@@ -1,6 +1,5 @@
 package com.example.gamemology.ui;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.gamemology.R;
+import com.example.gamemology.ai.GameAssistantActivity;
 import com.example.gamemology.databinding.ActivityMainBinding;
 import com.example.gamemology.ui.favorite.FavoriteFragment;
 import com.example.gamemology.ui.home.HomeFragment;
@@ -74,11 +74,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_search) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_search) {
             Intent intent = new Intent(this, SearchActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.action_ai_assistant) {
+            Intent intent = new Intent(this, GameAssistantActivity.class);
+            startActivity(intent);
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

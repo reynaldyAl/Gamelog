@@ -493,6 +493,11 @@ public class SearchActivity extends AppCompatActivity implements FilterBottomShe
         return super.onOptionsItemSelected(item);
     }
 
+    protected void startSearch(String query) {
+        // Call your private searchGames method
+        searchGames(query, true);
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

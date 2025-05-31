@@ -1,5 +1,6 @@
 package com.example.gamemology.ui.detail;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.example.gamemology.R;
+import com.example.gamemology.ai.GameAssistantActivity;
 import com.example.gamemology.api.ApiClient;
 import com.example.gamemology.api.ApiService;
 import com.example.gamemology.api.responses.GameResponse;
@@ -118,6 +120,9 @@ public class DetailActivity extends AppCompatActivity {
 
         binding.fabFavorite.setOnClickListener(v -> toggleFavorite());
 
+        // Add the setupAskAIButton call here after other setup
+        setupAskAIButton();
+
         // Observe network status changes
         NetworkStatusHelper.getInstance(this).observe(this, isConnected -> {
             if (isConnected && isOffline) {
@@ -137,6 +142,21 @@ public class DetailActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void setupAskAIButton() {
+        // Check if the button exists in the layout
+        if (binding.btnAskAi != null) {
+            binding.btnAskAi.setOnClickListener(v -> {
+                if (currentGame != null) {
+                    Intent intent = new Intent(DetailActivity.this, GameAssistantActivity.class);
+                    intent.putExtra(Constants.EXTRA_GAME, currentGame);
+                    startActivity(intent);
+                } else {
+                    showSnackbar(getString(R.string.error_game_data_not_loaded));
+                }
+            });
+        }
     }
 
     private void loadGameDetails(int gameId) {
@@ -295,10 +315,22 @@ public class DetailActivity extends AppCompatActivity {
             binding.viewPager.setVisibility(View.GONE);
             binding.appBarLayout.setVisibility(View.GONE); // Hide AppBar
             binding.fabFavorite.setVisibility(View.GONE);  // Hide FAB
+
+            // Also hide Ask AI button if it exists
+            if (binding.btnAskAi != null) {
+                binding.btnAskAi.setVisibility(View.GONE);
+            }
+
             offlineContentBinding.getRoot().setVisibility(View.VISIBLE);
         } else {
             binding.appBarLayout.setVisibility(View.VISIBLE);
             binding.fabFavorite.setVisibility(View.VISIBLE);
+
+            // Show Ask AI button if it exists
+            if (binding.btnAskAi != null) {
+                binding.btnAskAi.setVisibility(View.VISIBLE);
+            }
+
             offlineContentBinding.getRoot().setVisibility(View.GONE);
         }
     }
