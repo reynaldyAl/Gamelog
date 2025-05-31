@@ -2,6 +2,8 @@ package com.example.gamemology.ui.home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +21,30 @@ import com.example.gamemology.R;
 import com.example.gamemology.adapter.GameAdapter;
 import com.example.gamemology.database.DatabaseHelper;
 import com.example.gamemology.databinding.FragmentHomeBinding;
+import com.example.gamemology.databinding.LayoutOfflineNoticeBinding;
 import com.example.gamemology.models.Game;
 import com.example.gamemology.ui.detail.DetailActivity;
 import com.example.gamemology.utils.Constants;
 import com.example.gamemology.utils.LoadState;
+import com.example.gamemology.utils.NetworkStatusHelper;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
+    private static final long OFFLINE_NOTICE_TIMEOUT = 5000; // 5 seconds auto-dismiss
 
     private FragmentHomeBinding binding;
+    private LayoutOfflineNoticeBinding offlineNoticeBinding;
     private GameAdapter gameAdapter;
     private HomeViewModel viewModel;
     private DatabaseHelper dbHelper;
+
+    // Handler for auto-dismiss offline notice
+    private final Handler noticeHandler = new Handler(Looper.getMainLooper());
+    private final Runnable hideOfflineNoticeRunnable = () -> showOfflineNotice(false);
 
     @Nullable
     @Override
@@ -44,6 +56,18 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Inflate offline notice and add to the root view
+        View offlineNoticeView = getLayoutInflater().inflate(R.layout.layout_offline_notice,
+                (ViewGroup) binding.getRoot(), false);
+        offlineNoticeBinding = LayoutOfflineNoticeBinding.bind(offlineNoticeView);
+        ((ViewGroup) binding.getRoot()).addView(offlineNoticeView);
+
+        // Set up retry button click listener
+        offlineNoticeBinding.btnRetry.setOnClickListener(v -> refreshData());
+
+        // Initially hide offline notice
+        offlineNoticeBinding.getRoot().setVisibility(View.GONE);
 
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
@@ -57,19 +81,47 @@ public class HomeFragment extends Fragment {
         // Setup SwipeRefreshLayout
         binding.swipeRefresh.setOnRefreshListener(this::refreshData);
 
+        // Check initial offline state
+        boolean isOffline = !NetworkStatusHelper.getInstance(requireContext()).isNetworkAvailable();
+        if (isOffline) {
+            showOfflineNotice(true);
+        }
+
+        // Observe network status changes
+        NetworkStatusHelper.getInstance(requireContext()).observe(getViewLifecycleOwner(), isConnected -> {
+            if (isConnected) {
+                showOfflineNotice(false);
+                if (gameAdapter.getItemCount() == 0) {
+                    refreshData();
+                } else {
+                    // Show snackbar when connection restored
+                    Snackbar.make(binding.getRoot(),
+                            R.string.connection_restored,
+                            Snackbar.LENGTH_SHORT).show();
+                }
+            } else {
+                if (gameAdapter.getItemCount() > 0) {
+                    offlineNoticeBinding.txtOfflineMessage.setText(R.string.offline_using_cached_data);
+                } else {
+                    offlineNoticeBinding.txtOfflineMessage.setText(R.string.network_error);
+                }
+                showOfflineNotice(true);
+            }
+        });
+
         // Observe games result from ViewModel
         viewModel.getGamesResult().observe(getViewLifecycleOwner(), result -> {
             Log.d(TAG, "Games result updated: state=" + result.getState());
 
             // Handle different states
             if (result.getState() == LoadState.LOADING) {
-                showLoading(true);
+                showShimmerLoading(true);
                 hideLoadMoreProgress();
             } else if (result.getState() == LoadState.LOADING_MORE) {
                 showLoadMoreProgress();
             } else {
                 // Hide all loading indicators
-                showLoading(false);
+                showShimmerLoading(false);
                 hideLoadMoreProgress();
                 binding.swipeRefresh.setRefreshing(false);
 
@@ -163,8 +215,35 @@ public class HomeFragment extends Fragment {
         viewModel.refreshGames();
     }
 
-    private void showLoading(boolean show) {
-        binding.progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    private void showOfflineNotice(boolean show) {
+        if (offlineNoticeBinding != null) {
+            if (show) {
+                offlineNoticeBinding.getRoot().setVisibility(View.VISIBLE);
+
+                // Remove any pending auto-dismiss
+                noticeHandler.removeCallbacks(hideOfflineNoticeRunnable);
+
+                // Auto-dismiss after delay only if we have cached data
+                if (gameAdapter.getItemCount() > 0) {
+                    noticeHandler.postDelayed(hideOfflineNoticeRunnable, OFFLINE_NOTICE_TIMEOUT);
+                }
+            } else {
+                offlineNoticeBinding.getRoot().setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void showShimmerLoading(boolean show) {
+        if (show) {
+            binding.rvGames.setVisibility(View.GONE);
+            binding.emptyView.setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
+            binding.shimmerLayout.setVisibility(View.VISIBLE);
+            binding.shimmerLayout.startShimmer();
+        } else {
+            binding.shimmerLayout.stopShimmer();
+            binding.shimmerLayout.setVisibility(View.GONE);
+        }
     }
 
     private void showLoadMoreProgress() {
@@ -178,16 +257,35 @@ public class HomeFragment extends Fragment {
     private void showEmptyView() {
         binding.emptyView.setVisibility(View.VISIBLE);
         binding.rvGames.setVisibility(View.GONE);
+        binding.shimmerLayout.setVisibility(View.GONE);
     }
 
     private void showContent() {
         binding.emptyView.setVisibility(View.GONE);
         binding.rvGames.setVisibility(View.VISIBLE);
+        binding.shimmerLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (binding.shimmerLayout.getVisibility() == View.VISIBLE) {
+            binding.shimmerLayout.startShimmer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        binding.shimmerLayout.stopShimmer();
+        super.onPause();
     }
 
     @Override
     public void onDestroyView() {
+        // Remove any pending callbacks
+        noticeHandler.removeCallbacks(hideOfflineNoticeRunnable);
         super.onDestroyView();
         binding = null;
+        offlineNoticeBinding = null;
     }
 }

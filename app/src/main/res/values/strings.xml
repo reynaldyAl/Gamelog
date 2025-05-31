@@ -109,4 +109,14 @@
 
     <string name="offline_no_cache">Tidak ada data tersimpan untuk mode offline</string>
 
+    <!-- Offline mode messages -->
+    <string name="offline_mode">Offline Mode</string>
+    <string name="retry">Retry</string>
+    <string name="no_cache_try_later">No cached data available. Please check your internet connection and try again.</string>
+    <string name="offline_using_cached_data">You\'re offline. Showing cached data.</string>
+    <string name="connection_restored">Connection restored</string>
+    <string name="detail_offline_no_cache">This game information is not available in offline mode</string>
+    <string name="tap_to_retry">Tap to retry</string>
+    <string name="please_reconnect">Please check your internet connection and try again.</string>
+
 </resources>

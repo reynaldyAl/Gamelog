@@ -45,4 +45,10 @@
     <color name="rating_bad">#F44336</color>
 
     <color name="secondary">@color/accent</color>
+
+    <!-- Skeleton Improve   -->
+    <color name="shimmer_color">#DDDDDD</color>
+    <color name="shimmer_highlight">#EEEEEE</color>
+
+    <color name="colorWarning">#FF9800</color>  <!-- Orange warning color -->
 </resources>

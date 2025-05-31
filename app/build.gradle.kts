@@ -79,4 +79,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }

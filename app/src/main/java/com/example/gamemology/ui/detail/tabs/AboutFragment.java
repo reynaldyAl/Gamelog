@@ -20,6 +20,7 @@ import com.example.gamemology.api.responses.StoreResponse;
 import com.example.gamemology.databinding.FragmentAboutBinding;
 import com.example.gamemology.models.Game;
 import com.example.gamemology.utils.Constants;
+import com.example.gamemology.utils.NetworkUtils;
 import com.google.android.material.chip.Chip;
 
 import java.util.List;
@@ -93,9 +94,16 @@ public class AboutFragment extends Fragment {
         }
     }
 
-    // Replace only the loadGameStores method
     private void loadGameStores(int gameId) {
         Log.d("AboutFragment", "Loading stores for game ID: " + gameId);
+
+        // Don't try to load if we're offline
+        if (!NetworkUtils.isNetworkAvailable(requireContext())) {
+            Log.d("AboutFragment", "Offline mode - not loading stores");
+            binding.tvStoresTitle.setVisibility(View.GONE);
+            binding.rvStores.setVisibility(View.GONE);
+            return;
+        }
 
         Call<StoreResponse> call = apiService.getGameStores(gameId);
         call.enqueue(new Callback<StoreResponse>() {
@@ -159,5 +167,11 @@ public class AboutFragment extends Fragment {
                 binding.rvStores.setVisibility(View.GONE);
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
