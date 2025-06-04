@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 public interface ApiService {
 
@@ -112,4 +113,9 @@ public interface ApiService {
             @Query("page") int page,
             @Query("page_size") int pageSize
     );
+
+    // New method for pagination
+    @GET
+    Call<ScreenshotResponse> getGameScreenshotsNextPage(@Url String url);
+
 }

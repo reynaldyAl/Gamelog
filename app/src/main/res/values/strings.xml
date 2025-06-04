@@ -142,4 +142,7 @@
     <string name="ask_about_game">Ask about this game...</string>
     <string name="send_message">Send message</string>
 
+    <string name="close">Close</string>
+    <string name="load_more_screenshots">Load More Screenshots</string>
+
 </resources>
