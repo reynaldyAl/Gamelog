@@ -295,6 +295,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
+// Update or add the following method in DatabaseHelper class
+
     /**
      * Update a user's profile information
      *

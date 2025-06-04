@@ -5,28 +5,22 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.gamemology.R;
-import com.example.gamemology.adapter.GameAdapter;
 import com.example.gamemology.database.DatabaseHelper;
 import com.example.gamemology.databinding.FragmentProfileBinding;
-import com.example.gamemology.models.Game;
 import com.example.gamemology.models.User;
 import com.example.gamemology.ui.auth.LoginActivity;
-import com.example.gamemology.ui.detail.DetailActivity;
 import com.example.gamemology.utils.Constants;
 import com.example.gamemology.utils.SessionManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class ProfileFragment extends Fragment {
@@ -34,7 +28,7 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     private DatabaseHelper dbHelper;
     private SessionManager sessionManager;
-    private GameAdapter gameAdapter;
+    private static final int EDIT_PROFILE_REQUEST = 101;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,12 +47,27 @@ public class ProfileFragment extends Fragment {
 
         if (currentUser != null) {
             setupUserProfile(currentUser);
-            setupFavoriteGames(currentUser.getId());
         } else {
             redirectToLogin();
         }
 
+        // Set up click listeners
         binding.btnLogout.setOnClickListener(v -> logoutUser());
+
+        // Profile picture edit button
+        binding.btnEditPhoto.setOnClickListener(v -> startEditProfileActivity());
+
+        // Edit profile button
+        binding.btnEditProfile.setOnClickListener(v -> startEditProfileActivity());
+
+        // View favorites button - redirects to favorites tab
+        binding.btnViewFavorite.setOnClickListener(v ->
+                requireActivity().findViewById(R.id.nav_favorites).performClick());
+    }
+
+    private void startEditProfileActivity() {
+        Intent intent = new Intent(requireContext(), EditProfileActivity.class);
+        startActivityForResult(intent, EDIT_PROFILE_REQUEST);
     }
 
     private void setupUserProfile(User user) {
@@ -76,48 +85,7 @@ public class ProfileFragment extends Fragment {
                     .load(user.getProfileImage())
                     .placeholder(R.drawable.profile_placeholder)
                     .error(R.drawable.profile_placeholder)
-                    .circleCrop()
                     .into(binding.imgProfile);
-        }
-    }
-
-    private void setupFavoriteGames(int userId) {
-        gameAdapter = new GameAdapter(requireContext());
-        binding.rvFavorites.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.rvFavorites.setAdapter(gameAdapter);
-
-        // Set up click listener
-        gameAdapter.setOnItemClickListener(new GameAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Game game) {
-                Intent intent = new Intent(requireContext(), DetailActivity.class);
-                intent.putExtra(Constants.EXTRA_GAME_ID, game.getId());
-                startActivity(intent);
-            }
-
-            @Override
-            public void onFavoriteClick(Game game, boolean isFavorite) {
-                if (!isFavorite) {
-                    dbHelper.removeGameFromFavorites(game.getId(), userId);
-                    Toast.makeText(requireContext(), R.string.removed_from_favorites, Toast.LENGTH_SHORT).show();
-                    loadFavoriteGames(userId);
-                }
-            }
-        });
-
-        loadFavoriteGames(userId);
-    }
-
-    private void loadFavoriteGames(int userId) {
-        List<Game> favoriteGames = dbHelper.getAllFavoriteGames(userId);
-
-        if (favoriteGames.isEmpty()) {
-            binding.tvEmptyFavorites.setVisibility(View.VISIBLE);
-            binding.rvFavorites.setVisibility(View.GONE);
-        } else {
-            binding.tvEmptyFavorites.setVisibility(View.GONE);
-            binding.rvFavorites.setVisibility(View.VISIBLE);
-            gameAdapter.setGames(favoriteGames);
         }
     }
 
@@ -134,11 +102,14 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        User currentUser = sessionManager.getUser();
-        if (currentUser != null) {
-            loadFavoriteGames(currentUser.getId());
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_PROFILE_REQUEST && resultCode == EditProfileActivity.RESULT_PROFILE_UPDATED) {
+            // Profile was updated, refresh the UI
+            User updatedUser = sessionManager.getUser();
+            if (updatedUser != null) {
+                setupUserProfile(updatedUser);
+            }
         }
     }
 

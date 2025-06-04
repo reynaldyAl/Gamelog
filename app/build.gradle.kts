@@ -95,4 +95,6 @@ dependencies {
     implementation("androidx.emoji:emoji:1.1.0")
 
     implementation ("com.google.code.gson:gson:2.10.1")
+
+    implementation ("com.github.dhaval2404:imagepicker:2.1")
 }
