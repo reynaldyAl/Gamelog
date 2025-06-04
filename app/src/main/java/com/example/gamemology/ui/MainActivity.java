@@ -14,6 +14,7 @@ import com.example.gamemology.ai.GameAssistantActivity;
 import com.example.gamemology.databinding.ActivityMainBinding;
 import com.example.gamemology.ui.favorite.FavoriteFragment;
 import com.example.gamemology.ui.home.HomeFragment;
+import com.example.gamemology.ui.profile.ProfileFragment;  // Add this import
 import com.example.gamemology.ui.search.SearchActivity;
 import com.example.gamemology.utils.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -55,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new FavoriteFragment();
                     tag = Constants.TAG_FAVORITE_FRAGMENT;
                     setTitle(R.string.favorites);
+                } else if (itemId == R.id.nav_profile) {
+                    selectedFragment = new ProfileFragment();
+                    tag = Constants.TAG_PROFILE_FRAGMENT;
+                    setTitle(R.string.profile);
                 }
 
                 if (selectedFragment != null) {

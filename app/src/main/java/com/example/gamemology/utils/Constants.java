@@ -7,6 +7,9 @@ public class Constants {
     // API key - ganti dengan API key yang sebenarnya
     public static final String RAWG_API_KEY = "03d5b08e640a4ba08c2d8dffa0f5ebae";
 
+    // Tambahkan konstanta berikut di class Constants
+    public static final String TAG_PROFILE_FRAGMENT = "profile_fragment";
+
     // Intent extras
     public static final String EXTRA_GAME = "extra_game";
     public static final String EXTRA_GAME_ID = "extra_game_id";

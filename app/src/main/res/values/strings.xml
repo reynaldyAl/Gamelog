@@ -145,4 +145,30 @@
     <string name="close">Close</string>
     <string name="load_more_screenshots">Load More Screenshots</string>
 
+    <!-- Tambahkan string berikut -->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="logout">Logout</string>
+    <string name="profile">Profile</string>
+    <string name="register_prompt">Don\'t have an account? <b>Register</b></string>
+    <string name="login_prompt">Already have an account? <b>Login</b></string>
+    <string name="login_success">Login successful</string>
+    <string name="login_failed">Login failed. Please check your credentials</string>
+    <string name="register_success">Registration successful! Please login</string>
+    <string name="register_failed">Registration failed. Username or email may already be taken</string>
+    <string name="required_field">This field is required</string>
+    <string name="invalid_email">Please enter a valid email address</string>
+    <string name="password_too_short">Password must be at least 6 characters</string>
+    <string name="password_mismatch">Passwords do not match</string>
+    <string name="my_favorites">My Favorites</string>
+    <string name="no_favorites_yet">You haven\'t added any favorite games yet</string>
+    <string name="member_since">Member since %1$s</string>
+    <string name="create_account">Create Account</string>
+    <string name="app_logo">App Logo</string>
+    <string name="profile_image">Profile Image</string>
+
 </resources>

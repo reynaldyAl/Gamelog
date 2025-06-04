@@ -67,5 +67,13 @@
 
     <color name="ai_message_text">@color/black</color>
 
+    <!-- Define blue colors -->
+    <color name="blue">#2196F3</color>
+    <color name="dark_blue">#1976D2</color>
+    <color name="light_blue">#BBDEFB</color>
+
+    <!-- This fixes your colorPrimary error -->
+    <color name="colorPrimary">@color/blue</color>
+
 
 </resources>

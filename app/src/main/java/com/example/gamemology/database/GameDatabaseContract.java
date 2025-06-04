@@ -56,4 +56,14 @@ public final class GameDatabaseContract {
         public static final String COLUMN_TYPE = "type"; // What was synced (e.g., "home", "genres")
         public static final String COLUMN_LAST_SYNC = "last_sync"; // When it was last synced
     }
+
+    public static class UserEntry implements BaseColumns {
+        public static final String TABLE_NAME = "users";
+        public static final String COLUMN_ID = "id";
+        public static final String COLUMN_USERNAME = "username";
+        public static final String COLUMN_EMAIL = "email";
+        public static final String COLUMN_PASSWORD = "password";
+        public static final String COLUMN_PROFILE_IMAGE = "profile_image";
+        public static final String COLUMN_JOIN_DATE = "join_date";
+    }
 }
