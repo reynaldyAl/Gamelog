@@ -4,8 +4,14 @@
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
         android:title="@string/home" />
+
     <item
         android:id="@+id/nav_favorites"
         android:icon="@drawable/ic_favorite"
         android:title="@string/favorites" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_person"
+        android:title="@string/profile" />
 </menu>

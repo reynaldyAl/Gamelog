@@ -93,4 +93,6 @@ dependencies {
     implementation("io.noties.markwon:image:4.6.2")
     implementation("io.noties.markwon:ext-tables:4.6.2")
     implementation("androidx.emoji:emoji:1.1.0")
+
+    implementation ("com.google.code.gson:gson:2.10.1")
 }

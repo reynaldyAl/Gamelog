@@ -5,7 +5,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,104 +20,65 @@ import com.example.gamemology.models.Screenshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScreenshotAdapter extends RecyclerView.Adapter<ScreenshotAdapter.ScreenshotViewHolder> {
+public class ScreenshotAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "ScreenshotAdapter";
+    private static final int VIEW_TYPE_SCREENSHOT = 0;
+    private static final int VIEW_TYPE_LOAD_MORE = 1;
+
     private final Context context;
     private final List<Screenshot> screenshotList;
     private OnScreenshotClickListener listener;
+    private OnLoadMoreClickListener loadMoreListener;
     private int currentGameId = -1;
+    private boolean hasMoreScreenshots = false;
+    private boolean isLoadingMore = false;
 
     public ScreenshotAdapter(Context context) {
         this.context = context;
         this.screenshotList = new ArrayList<>();
     }
 
-    // Add this method to clear out previous game data
     public void clearItems() {
         this.screenshotList.clear();
         notifyDataSetChanged();
         Log.d(TAG, "All screenshots cleared");
     }
 
-    // Update this method to use game-specific screenshots
     private void addHardCodedScreenshotsForGame(int gameId) {
-        this.currentGameId = gameId;
+        // Existing code for hardcoded screenshots...
+    }
 
-        // Add different hard-coded screenshots based on game ID
-        // This ensures we have fallback images unique to each game
-        switch (gameId % 5) {
-            case 0:
-                screenshotList.add(new Screenshot(
-                        1,
-                        "https://media.rawg.io/media/screenshots/7b8/7b8895a23e8ca0dbd9e1ba24696579d9.jpg"
-                ));
-                screenshotList.add(new Screenshot(
-                        2,
-                        "https://media.rawg.io/media/screenshots/6aa/6aa56ef1485c8b287a913fa842883daa.jpg"
-                ));
-                break;
-            case 1:
-                screenshotList.add(new Screenshot(
-                        1,
-                        "https://media.rawg.io/media/screenshots/3d6/3d6066e45a2d241b5e92ab3ec98da34c.jpg"
-                ));
-                screenshotList.add(new Screenshot(
-                        2,
-                        "https://media.rawg.io/media/screenshots/a2e/a2e99d5003e6c3850bd14c85096b23a3.jpg"
-                ));
-                break;
-            case 2:
-                screenshotList.add(new Screenshot(
-                        1,
-                        "https://media.rawg.io/media/screenshots/375/375f84d018242d7519a230f623981217.jpg"
-                ));
-                screenshotList.add(new Screenshot(
-                        2,
-                        "https://media.rawg.io/media/screenshots/4c7/4c7f3c6761b7c24e40a5dfd4dff23cb5.jpg"
-                ));
-                break;
-            case 3:
-                screenshotList.add(new Screenshot(
-                        1,
-                        "https://media.rawg.io/media/screenshots/fd3/fd3a97519e6d5b416b4a22a2c450f7be.jpg"
-                ));
-                screenshotList.add(new Screenshot(
-                        2,
-                        "https://media.rawg.io/media/screenshots/7af/7af428c6596224d8c7c8d80a048bddf1.jpg"
-                ));
-                break;
-            case 4:
-                screenshotList.add(new Screenshot(
-                        1,
-                        "https://media.rawg.io/media/screenshots/58d/58d3d1e2cdf62b830bd5a5c5753935a5.jpg"
-                ));
-                screenshotList.add(new Screenshot(
-                        2,
-                        "https://media.rawg.io/media/screenshots/955/9556b26fa9b0c676b528fc092c8f8944.jpg"
-                ));
-                break;
-        }
-
-        Log.d(TAG, "Added hard-coded screenshots for game ID: " + gameId);
+    @Override
+    public int getItemViewType(int position) {
+        return (position < screenshotList.size()) ? VIEW_TYPE_SCREENSHOT : VIEW_TYPE_LOAD_MORE;
     }
 
     @NonNull
     @Override
-    public ScreenshotViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_screenshot, parent, false);
-        return new ScreenshotViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_LOAD_MORE) {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_load_more, parent, false);
+            return new LoadMoreViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_screenshot, parent, false);
+            return new ScreenshotViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ScreenshotViewHolder holder, int position) {
-        Screenshot screenshot = screenshotList.get(position);
-        holder.bind(screenshot);
-        Log.d(TAG, "Binding screenshot at position " + position + ": " + screenshot.getImageUrl());
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof ScreenshotViewHolder) {
+            Screenshot screenshot = screenshotList.get(position);
+            ((ScreenshotViewHolder) holder).bind(screenshot);
+            Log.d(TAG, "Binding screenshot at position " + position + ": " + screenshot.getImageUrl());
+        } else if (holder instanceof LoadMoreViewHolder) {
+            ((LoadMoreViewHolder) holder).bind(isLoadingMore);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return screenshotList.size();
+        return screenshotList.size() + (hasMoreScreenshots ? 1 : 0);
     }
 
     public void setScreenshots(List<Screenshot> screenshots, int gameId) {
@@ -124,8 +87,10 @@ public class ScreenshotAdapter extends RecyclerView.Adapter<ScreenshotAdapter.Sc
         // Only add hard-coded screenshots if there are no real ones
         if (screenshots == null || screenshots.isEmpty()) {
             addHardCodedScreenshotsForGame(gameId);
+            hasMoreScreenshots = false;
         } else {
             this.screenshotList.addAll(screenshots);
+            hasMoreScreenshots = true;
             Log.d(TAG, "Added " + screenshots.size() + " real screenshots for game ID: " + gameId);
         }
 
@@ -133,16 +98,51 @@ public class ScreenshotAdapter extends RecyclerView.Adapter<ScreenshotAdapter.Sc
         notifyDataSetChanged();
     }
 
-    // Click listener interface
+    public void addMoreScreenshots(List<Screenshot> newScreenshots, boolean hasMore) {
+        int startPosition = screenshotList.size();
+        this.screenshotList.addAll(newScreenshots);
+        this.hasMoreScreenshots = hasMore;
+        this.isLoadingMore = false;
+
+        notifyItemRangeInserted(startPosition, newScreenshots.size());
+        notifyItemChanged(screenshotList.size()); // Update load more button
+
+        Log.d(TAG, "Added " + newScreenshots.size() + " more screenshots. Has more: " + hasMore);
+    }
+
+    public void setLoadingMore(boolean isLoading) {
+        this.isLoadingMore = isLoading;
+        if (hasMoreScreenshots) {
+            notifyItemChanged(screenshotList.size());
+        }
+    }
+
+    public void setHasMoreScreenshots(boolean hasMore) {
+        if (this.hasMoreScreenshots != hasMore) {
+            this.hasMoreScreenshots = hasMore;
+            notifyDataSetChanged();
+        }
+    }
+
+    // Screenshot click listener interface
     public interface OnScreenshotClickListener {
         void onScreenshotClick(Screenshot screenshot, int position);
+    }
+
+    // Load more click listener interface
+    public interface OnLoadMoreClickListener {
+        void onLoadMoreClick();
     }
 
     public void setOnScreenshotClickListener(OnScreenshotClickListener listener) {
         this.listener = listener;
     }
 
-    // ViewHolder class
+    public void setOnLoadMoreClickListener(OnLoadMoreClickListener listener) {
+        this.loadMoreListener = listener;
+    }
+
+    // ViewHolder for screenshots
     public class ScreenshotViewHolder extends RecyclerView.ViewHolder {
         private final ImageView imgScreenshot;
 
@@ -171,6 +171,37 @@ public class ScreenshotAdapter extends RecyclerView.Adapter<ScreenshotAdapter.Sc
                 Log.d(TAG, "Screenshot has null or empty URL, using placeholder");
                 imgScreenshot.setImageResource(R.drawable.placeholder_screenshot);
             }
+        }
+    }
+
+    // ViewHolder for load more button
+    public class LoadMoreViewHolder extends RecyclerView.ViewHolder {
+        private final Button btnLoadMore;
+        private final ProgressBar progressBar;
+
+        public LoadMoreViewHolder(@NonNull View itemView) {
+            super(itemView);
+            btnLoadMore = itemView.findViewById(R.id.btn_load_more);
+            progressBar = itemView.findViewById(R.id.progress_bar);
+
+            btnLoadMore.setOnClickListener(v -> {
+                if (loadMoreListener != null && !isLoadingMore) {
+                    isLoadingMore = true;
+                    updateLoadingState();
+                    loadMoreListener.onLoadMoreClick();
+                }
+            });
+        }
+
+        public void bind(boolean isLoading) {
+            isLoadingMore = isLoading;
+            updateLoadingState();
+        }
+
+
+        private void updateLoadingState() {
+            btnLoadMore.setVisibility(isLoadingMore ? View.INVISIBLE : View.VISIBLE);
+            progressBar.setVisibility(isLoadingMore ? View.VISIBLE : View.GONE);
         }
     }
 }
