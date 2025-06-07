@@ -195,4 +195,13 @@
     <string name="view_my_favorites">View My Favorites</string>
     <string name="join_date">Join Date</string>
 
+    <string name="please_login">Please login to use this feature</string>
+    <string name="please_login_to_view_favorites">Please login to view your favorites</string>
+    <string name="password_weak">Password to weak, re-enter and use better password</string>
+    <string name="username_no_spaces">Username No Spaces! Please re-enter your username\n</string>
+    <string name="username_too_short">Username too Short! Please choose better username\n</string>
+    <string name="email_exists">Email already exist! Please use another email</string>
+    <string name="username_exists">Username Already Exist! Choose different username</string>
+
+
 </resources>

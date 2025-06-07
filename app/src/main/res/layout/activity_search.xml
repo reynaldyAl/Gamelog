@@ -168,4 +168,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chip_group_active_filters" />
 
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -30,6 +30,7 @@ import com.example.gamemology.models.User;
 import com.example.gamemology.utils.FileUtils;
 import com.example.gamemology.utils.SessionManager;
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -79,28 +80,35 @@ public class EditProfileActivity extends AppCompatActivity {
         binding.btnSave.setOnClickListener(v -> saveChanges());
     }
 
-    private void loadProfileImage() {
-        if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().isEmpty()) {
-            try {
-                File imageFile = new File(currentUser.getProfileImage());
-                if (imageFile.exists()) {
-                    Glide.with(this)
-                            .load(imageFile)
-                            .placeholder(R.drawable.profile_placeholder)
-                            .error(R.drawable.profile_placeholder)
-                            .into(binding.imgProfile);
-                } else {
-                    Log.w(TAG, "Profile image file doesn't exist: " + currentUser.getProfileImage());
-                    binding.imgProfile.setImageResource(R.drawable.profile_placeholder);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error loading profile image", e);
+private void loadProfileImage() {
+    if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().isEmpty()) {
+        try {
+            File imageFile = new File(currentUser.getProfileImage());
+            if (imageFile.exists()) {
+                // Clear Glide cache before loading
+                Glide.with(this)
+                        .clear(binding.imgProfile);
+                
+                // Load the image with skipMemoryCache and diskCacheStrategy
+                Glide.with(this)
+                        .load(imageFile)
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .placeholder(R.drawable.profile_placeholder)
+                        .error(R.drawable.profile_placeholder)
+                        .into(binding.imgProfile);
+            } else {
+                Log.w(TAG, "Profile image file doesn't exist: " + currentUser.getProfileImage());
                 binding.imgProfile.setImageResource(R.drawable.profile_placeholder);
             }
-        } else {
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading profile image", e);
             binding.imgProfile.setImageResource(R.drawable.profile_placeholder);
         }
+    } else {
+        binding.imgProfile.setImageResource(R.drawable.profile_placeholder);
     }
+}
 
     private void showImagePickerOptions() {
         if (checkPermissions()) {
@@ -278,59 +286,71 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void saveChanges() {
-        String email = binding.etEmail.getText().toString().trim();
+private void saveChanges() {
+    String email = binding.etEmail.getText().toString().trim();
 
-        // Validate inputs
-        if (TextUtils.isEmpty(email)) {
-            binding.tilEmail.setError(getString(R.string.required_field));
-            return;
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilEmail.setError(getString(R.string.invalid_email));
-            return;
-        }
-
-        binding.progressBar.setVisibility(View.VISIBLE);
-        binding.btnSave.setEnabled(false);
-
-        // Copy image file to app's private directory if selected
-        String profileImagePath = currentUser.getProfileImage();
-        if (selectedImageUri != null) {
-            try {
-                File destFile = FileUtils.createImageFile(this, "profile_" + currentUser.getId());
-                FileUtils.copyFile(this, selectedImageUri, destFile);
-                profileImagePath = destFile.getAbsolutePath();
-                Log.d(TAG, "Saved profile image to: " + profileImagePath);
-            } catch (Exception e) {
-                Log.e(TAG, "Error saving profile image", e);
-                Toast.makeText(this, R.string.error_updating_profile, Toast.LENGTH_SHORT).show();
-                binding.progressBar.setVisibility(View.GONE);
-                binding.btnSave.setEnabled(true);
-                return;
-            }
-        }
-
-        // Update user profile
-        currentUser.setEmail(email);
-        currentUser.setProfileImage(profileImagePath);
-
-        int result = dbHelper.updateUserProfile(currentUser);
-        if (result > 0) {
-            // Update session with updated user
-            sessionManager.saveUser(currentUser);
-            Toast.makeText(this, R.string.profile_updated, Toast.LENGTH_SHORT).show();
-            setResult(RESULT_PROFILE_UPDATED);
-            finish();
-        } else {
-            Toast.makeText(this, R.string.error_updating_profile, Toast.LENGTH_SHORT).show();
-            binding.btnSave.setEnabled(true);
-        }
-
-        binding.progressBar.setVisibility(View.GONE);
+    // Validate inputs
+    if (TextUtils.isEmpty(email)) {
+        binding.tilEmail.setError(getString(R.string.required_field));
+        return;
     }
 
+    if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        binding.tilEmail.setError(getString(R.string.invalid_email));
+        return;
+    }
+
+    binding.progressBar.setVisibility(View.VISIBLE);
+    binding.btnSave.setEnabled(false);
+
+    // Copy image file to app's private directory if selected
+    String profileImagePath = currentUser.getProfileImage();
+    if (selectedImageUri != null) {
+        try {
+            // First delete the old profile image if it exists
+            if (profileImagePath != null && !profileImagePath.isEmpty()) {
+                File oldFile = new File(profileImagePath);
+                if (oldFile.exists()) {
+                    if (!oldFile.delete()) {
+                        Log.w(TAG, "Could not delete old profile image: " + profileImagePath);
+                    }
+                }
+            }
+            
+            // Create a unique filename using timestamp
+            String uniqueFileName = "profile_" + currentUser.getId() + "_" + System.currentTimeMillis();
+            File destFile = FileUtils.createImageFile(this, uniqueFileName);
+            
+            FileUtils.copyFile(this, selectedImageUri, destFile);
+            profileImagePath = destFile.getAbsolutePath();
+            Log.d(TAG, "Saved profile image to: " + profileImagePath);
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving profile image", e);
+            Toast.makeText(this, R.string.error_updating_profile, Toast.LENGTH_SHORT).show();
+            binding.progressBar.setVisibility(View.GONE);
+            binding.btnSave.setEnabled(true);
+            return;
+        }
+    }
+
+    // Update user profile
+    currentUser.setEmail(email);
+    currentUser.setProfileImage(profileImagePath);
+
+    int result = dbHelper.updateUserProfile(currentUser);
+    if (result > 0) {
+        // Update session with updated user
+        sessionManager.saveUser(currentUser);
+        Toast.makeText(this, R.string.profile_updated, Toast.LENGTH_SHORT).show();
+        setResult(RESULT_PROFILE_UPDATED);
+        finish();
+    } else {
+        Toast.makeText(this, R.string.error_updating_profile, Toast.LENGTH_SHORT).show();
+        binding.btnSave.setEnabled(true);
+    }
+
+    binding.progressBar.setVisibility(View.GONE);
+}
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

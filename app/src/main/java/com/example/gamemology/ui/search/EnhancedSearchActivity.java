@@ -2,17 +2,19 @@ package com.example.gamemology.ui.search;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.gamemology.R;
 import com.example.gamemology.ai.GeminiClient;
 import com.example.gamemology.ai.utils.AIPromptUtils;
-import com.example.gamemology.databinding.ActivityEnhancedSearchBinding;
 import com.example.gamemology.ui.search.FilterBottomSheet.FilterOptions;
-import com.example.gamemology.utils.NetworkUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +30,11 @@ import java.util.List;
 public class EnhancedSearchActivity extends SearchActivity {
     private static final String TAG = "EnhancedSearchActivity";
 
-    private ActivityEnhancedSearchBinding enhancedBinding;
+    // AI search components
+    private SwitchCompat switchAiSearch;
+    private TextView searchInterpretation;
+    private View aiSearchIndicator;
+
     private GeminiClient geminiClient;
     private boolean isAiSearchEnabled = false;
     private SearchView searchView;
@@ -53,48 +59,65 @@ public class EnhancedSearchActivity extends SearchActivity {
     private void setupEnhancedSearch() {
         // Find the SearchView with the correct ID from layout
         searchView = findViewById(R.id.searchView);
-
-        // Inflate enhanced search controls
-        enhancedBinding = ActivityEnhancedSearchBinding.inflate(getLayoutInflater());
+        if (searchView == null) {
+            Log.e(TAG, "SearchView not found");
+            return;
+        }
 
         // Find the container we added to the search layout
         ViewGroup controlsContainer = findViewById(R.id.search_controls_container);
-        if (controlsContainer != null) {
-            controlsContainer.addView(enhancedBinding.getRoot());
-        } else {
-            Log.e(TAG, "Could not find container for AI controls");
+        if (controlsContainer == null) {
+            Log.e(TAG, "Could not find container for AI controls: search_controls_container");
+            return;
+        }
+
+        // Directly inflate the AI search controls layout
+        View aiControlsView = LayoutInflater.from(this)
+                .inflate(R.layout.activity_enhanced_search, controlsContainer, false);
+        controlsContainer.addView(aiControlsView);
+
+        // Find views in the inflated layout
+        switchAiSearch = aiControlsView.findViewById(R.id.switch_ai_search);
+        searchInterpretation = aiControlsView.findViewById(R.id.search_interpretation);
+        aiSearchIndicator = aiControlsView.findViewById(R.id.ai_search_indicator);
+
+        if (switchAiSearch == null || searchInterpretation == null || aiSearchIndicator == null) {
+            Log.e(TAG, "One or more views not found in activity_enhanced_search");
             return;
         }
 
         // Setup AI search toggle
-        enhancedBinding.switchAiSearch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        switchAiSearch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isAiSearchEnabled = isChecked;
             updateSearchHint();
-            enhancedBinding.aiSearchIndicator.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            aiSearchIndicator.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+
+            // Hide interpretation when toggling off
+            if (!isChecked) {
+                searchInterpretation.setVisibility(View.GONE);
+            }
         });
 
         // Initial state
         updateSearchHint();
 
         // Override search query listener
-        if (searchView != null) {
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    if (isAiSearchEnabled && query != null && !query.trim().isEmpty()) {
-                        performAISearch(query);
-                        return true;
-                    }
-                    // Let parent activity handle normal search
-                    return false;
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (isAiSearchEnabled && query != null && !query.trim().isEmpty()) {
+                    performAISearch(query);
+                    return true;
                 }
+                // Let parent activity handle normal search
+                return false;
+            }
 
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false; // Default behavior
-                }
-            });
-        }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false; // Default behavior
+            }
+        });
     }
 
     private void updateSearchHint() {
@@ -113,8 +136,8 @@ public class EnhancedSearchActivity extends SearchActivity {
         }
 
         // Set search interpretation hint
-        enhancedBinding.searchInterpretation.setText(getString(R.string.analyzing_query));
-        enhancedBinding.searchInterpretation.setVisibility(View.VISIBLE);
+        searchInterpretation.setText(getString(R.string.analyzing_query));
+        searchInterpretation.setVisibility(View.VISIBLE);
 
         // Use Gemini to interpret natural language query
         String searchPrompt = AIPromptUtils.createSearchPrompt(naturalQuery);
@@ -134,10 +157,10 @@ public class EnhancedSearchActivity extends SearchActivity {
                         doSearch(keywords);
 
                         // Show interpretation
-                        enhancedBinding.searchInterpretation.setText(
+                        searchInterpretation.setText(
                                 getString(R.string.ai_search_interpretation,
                                         getSearchDescription(searchParams)));
-                        enhancedBinding.searchInterpretation.setVisibility(View.VISIBLE);
+                        searchInterpretation.setVisibility(View.VISIBLE);
                     });
                 } catch (Exception e) {
                     Log.e(TAG, "Error parsing AI response", e);
@@ -146,7 +169,7 @@ public class EnhancedSearchActivity extends SearchActivity {
                         doSearch(naturalQuery);
                         Toast.makeText(EnhancedSearchActivity.this,
                                 R.string.ai_search_fallback, Toast.LENGTH_SHORT).show();
-                        enhancedBinding.searchInterpretation.setVisibility(View.GONE);
+                        searchInterpretation.setVisibility(View.GONE);
                     });
                 }
             }
@@ -159,7 +182,7 @@ public class EnhancedSearchActivity extends SearchActivity {
                     doSearch(naturalQuery);
                     Toast.makeText(EnhancedSearchActivity.this,
                             R.string.ai_search_fallback, Toast.LENGTH_SHORT).show();
-                    enhancedBinding.searchInterpretation.setVisibility(View.GONE);
+                    searchInterpretation.setVisibility(View.GONE);
                 });
             }
         });
