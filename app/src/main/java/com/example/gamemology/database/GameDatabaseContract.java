@@ -48,6 +48,7 @@ public final class GameDatabaseContract {
         public static final String COLUMN_IMAGE = "image";
         public static final String COLUMN_GAMES_COUNT = "games_count";
         public static final String COLUMN_TIMESTAMP = "timestamp";
+        public static final String COLUMN_FULL_DATA = "full_data"; // Add this missing column
     }
 
     // Table for tracking last synced timestamps

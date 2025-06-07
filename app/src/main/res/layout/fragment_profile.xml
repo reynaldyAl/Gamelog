@@ -101,7 +101,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-
+                        android:src="@drawable/ic_email"
                         app:tint="@color/blue"
                         android:contentDescription="@string/email" />
 

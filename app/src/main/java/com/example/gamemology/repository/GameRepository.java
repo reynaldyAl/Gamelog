@@ -15,8 +15,10 @@ import com.example.gamemology.api.responses.GenreResponse;
 import com.example.gamemology.api.responses.PlatformResponse;
 import com.example.gamemology.database.DatabaseHelper;
 import com.example.gamemology.models.Game;
+import com.example.gamemology.models.User;
 import com.example.gamemology.utils.Constants;
 import com.example.gamemology.utils.NetworkUtils;
+import com.example.gamemology.utils.SessionManager;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -42,30 +44,43 @@ public class GameRepository {
         dbHelper = DatabaseHelper.getInstance(context);
     }
 
-    // Fetch trending games with offline support
+    // Helper method to get current user ID
+    private int getCurrentUserId() {
+        try {
+            User user = SessionManager.getInstance(context).getUser();
+            return user != null ? user.getId() : 1; // Default to user ID 1 if not logged in
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting current user ID", e);
+            return 1; // Default user ID
+        }
+    }
+
+    // Fetch trending games with offline support and user context
     public LiveData<List<Game>> getTrendingGames() {
         MutableLiveData<List<Game>> gamesLiveData = new MutableLiveData<>();
+
+        int userId = getCurrentUserId();  // Get current user ID
 
         // Check if we have connectivity
         boolean isOnline = NetworkUtils.isNetworkAvailable(context);
         String category = "trending";
 
         // If online or cache expired, try to fetch from network
-        if (isOnline && dbHelper.isCacheExpired("home_" + category)) {
+        if (isOnline && dbHelper.isCacheExpired("home_" + category, userId)) {
             // Fetch from network
             apiService.getGameList(1, 10, null).enqueue(new Callback<GameListResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<GameListResponse> call, @NonNull Response<GameListResponse> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
-                        // Save to cache
-                        dbHelper.cacheGames(response.body().getResults(), category, 1);
+                        // Save to cache with user ID
+                        dbHelper.cacheGames(response.body().getResults(), category, 1, userId);
 
                         // Convert to Game model and deliver
-                        List<Game> games = convertResponseToGames(response.body().getResults());
+                        List<Game> games = convertResponseToGames(response.body().getResults(), userId);
                         gamesLiveData.setValue(games);
                     } else {
-                        // If API call fails, try to use cached data
-                        List<Game> cachedGames = dbHelper.getCachedGames(category, 1);
+                        // If API call fails, try to use cached data for the user
+                        List<Game> cachedGames = dbHelper.getCachedGames(category, 1, userId);
                         if (!cachedGames.isEmpty()) {
                             gamesLiveData.setValue(cachedGames);
                         } else {
@@ -78,8 +93,8 @@ public class GameRepository {
                 public void onFailure(@NonNull Call<GameListResponse> call, @NonNull Throwable t) {
                     Log.e(TAG, "Network error fetching trending games", t);
 
-                    // Use cached data on failure
-                    List<Game> cachedGames = dbHelper.getCachedGames(category, 1);
+                    // Use cached data on failure for the current user
+                    List<Game> cachedGames = dbHelper.getCachedGames(category, 1, userId);
                     if (!cachedGames.isEmpty()) {
                         gamesLiveData.setValue(cachedGames);
                     } else {
@@ -88,8 +103,8 @@ public class GameRepository {
                 }
             });
         } else {
-            // Offline or cache still valid - use cached data
-            List<Game> cachedGames = dbHelper.getCachedGames(category, 1);
+            // Offline or cache still valid - use cached data for the current user
+            List<Game> cachedGames = dbHelper.getCachedGames(category, 1, userId);
             if (!cachedGames.isEmpty()) {
                 gamesLiveData.setValue(cachedGames);
             } else if (isOnline) {
@@ -98,8 +113,8 @@ public class GameRepository {
                     @Override
                     public void onResponse(@NonNull Call<GameListResponse> call, @NonNull Response<GameListResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
-                            dbHelper.cacheGames(response.body().getResults(), category, 1);
-                            List<Game> games = convertResponseToGames(response.body().getResults());
+                            dbHelper.cacheGames(response.body().getResults(), category, 1, userId);
+                            List<Game> games = convertResponseToGames(response.body().getResults(), userId);
                             gamesLiveData.setValue(games);
                         } else {
                             gamesLiveData.setValue(null);
@@ -119,14 +134,15 @@ public class GameRepository {
         return gamesLiveData;
     }
 
-    // Fetch game details with offline support
+    // Fetch game details with offline support and user context
     public LiveData<GameResponse> getGameDetails(int gameId) {
         MutableLiveData<GameResponse> gameLiveData = new MutableLiveData<>();
+        int userId = getCurrentUserId();  // Get current user ID
 
         boolean isOnline = NetworkUtils.isNetworkAvailable(context);
 
-        // Check if we have cached data
-        String cachedDetails = dbHelper.getCachedGameDetails(gameId);
+        // Check if we have cached data for this user
+        String cachedDetails = dbHelper.getCachedGameDetails(gameId, userId);
         boolean hasCachedData = cachedDetails != null;
 
         if (isOnline) {
@@ -137,9 +153,9 @@ public class GameRepository {
                     if (response.isSuccessful() && response.body() != null) {
                         GameResponse game = response.body();
 
-                        // Cache the full game details JSON
+                        // Cache for the current user
                         String gameJson = gson.toJson(game);
-                        dbHelper.cacheGameDetails(gameId, gameJson);
+                        dbHelper.cacheGameDetails(gameId, gameJson, userId);
 
                         gameLiveData.setValue(game);
                     } else if (hasCachedData) {
@@ -190,14 +206,15 @@ public class GameRepository {
         return gameLiveData;
     }
 
-    // Fetch genres with offline support
+    // Fetch genres with offline support and user context
     public LiveData<List<GenreResponse.Genre>> getGenres() {
         MutableLiveData<List<GenreResponse.Genre>> genresLiveData = new MutableLiveData<>();
+        int userId = getCurrentUserId();  // Get current user ID
 
         boolean isOnline = NetworkUtils.isNetworkAvailable(context);
         String categoryType = "genre";
 
-        if (isOnline && dbHelper.isCacheExpired(categoryType)) {
+        if (isOnline && dbHelper.isCacheExpired(categoryType, userId)) {
             // Fetch from network
             apiService.getGenres(1, 20).enqueue(new Callback<GenreResponse>() {
                 @Override
@@ -205,13 +222,13 @@ public class GameRepository {
                     if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
                         List<GenreResponse.Genre> genres = response.body().getResults();
 
-                        // Cache genres
-                        dbHelper.cacheCategories(genres, categoryType);
+                        // Cache genres for current user
+                        dbHelper.cacheCategories(genres, categoryType, userId);
 
                         genresLiveData.setValue(genres);
                     } else {
                         // If API call fails, try to use cached data
-                        List<GenreResponse.Genre> cachedGenres = dbHelper.getCachedCategories(categoryType, GenreResponse.Genre.class);
+                        List<GenreResponse.Genre> cachedGenres = dbHelper.getCachedCategories(categoryType, GenreResponse.Genre.class, userId);
                         if (!cachedGenres.isEmpty()) {
                             genresLiveData.setValue(cachedGenres);
                         } else {
@@ -225,7 +242,7 @@ public class GameRepository {
                     Log.e(TAG, "Network error fetching genres", t);
 
                     // Use cached data on failure
-                    List<GenreResponse.Genre> cachedGenres = dbHelper.getCachedCategories(categoryType, GenreResponse.Genre.class);
+                    List<GenreResponse.Genre> cachedGenres = dbHelper.getCachedCategories(categoryType, GenreResponse.Genre.class, userId);
                     if (!cachedGenres.isEmpty()) {
                         genresLiveData.setValue(cachedGenres);
                     } else {
@@ -234,8 +251,8 @@ public class GameRepository {
                 }
             });
         } else {
-            // Offline or cache still valid - use cached data
-            List<GenreResponse.Genre> cachedGenres = dbHelper.getCachedCategories(categoryType, GenreResponse.Genre.class);
+            // Offline or cache still valid - use cached data for current user
+            List<GenreResponse.Genre> cachedGenres = dbHelper.getCachedCategories(categoryType, GenreResponse.Genre.class, userId);
             if (!cachedGenres.isEmpty()) {
                 genresLiveData.setValue(cachedGenres);
             } else if (isOnline) {
@@ -245,7 +262,7 @@ public class GameRepository {
                     public void onResponse(@NonNull Call<GenreResponse> call, @NonNull Response<GenreResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
                             List<GenreResponse.Genre> genres = response.body().getResults();
-                            dbHelper.cacheCategories(genres, categoryType);
+                            dbHelper.cacheCategories(genres, categoryType, userId);
                             genresLiveData.setValue(genres);
                         } else {
                             genresLiveData.setValue(null);
@@ -265,39 +282,46 @@ public class GameRepository {
         return genresLiveData;
     }
 
-    // Helper method to convert API response to app model
-    private List<Game> convertResponseToGames(List<GameResponse> gameResponses) {
+    // Updated conversion method to check favorites for specific user
+    private List<Game> convertResponseToGames(List<GameResponse> responses, int userId) {
         List<Game> games = new ArrayList<>();
-
-        for (GameResponse response : gameResponses) {
-            Game game = new Game();
-            game.setId(response.getId());
-            game.setName(response.getName());
-            game.setReleased(response.getReleased());
-            game.setBackgroundImage(response.getBackgroundImage());
-            game.setRating(response.getRating());
-            game.setFavorite(dbHelper.isGameFavorite(response.getId()));
-            games.add(game);
+        if (responses != null) {
+            for (GameResponse response : responses) {
+                Game game = new Game();
+                game.setId(response.getId());
+                game.setName(response.getName());
+                game.setReleased(response.getReleased());
+                game.setBackgroundImage(response.getBackgroundImage());
+                game.setRating(response.getRating());
+                // Check if this game is favorited by the current user
+                game.setFavorite(dbHelper.isGameFavorite(game.getId(), userId));
+                games.add(game);
+            }
         }
-
         return games;
     }
 
-    // Add this method to your GameRepository.java
+    // Backward compatibility wrapper
+    private List<Game> convertResponseToGames(List<GameResponse> responses) {
+        return convertResponseToGames(responses, getCurrentUserId());
+    }
+
+    // Get games page with user context
     public LiveData<List<Game>> getGamesPage(int page, String category) {
         MutableLiveData<List<Game>> gamesLiveData = new MutableLiveData<>();
+        int userId = getCurrentUserId();  // Get current user ID
 
         // Check if we have connectivity
         boolean isOnline = NetworkUtils.isNetworkAvailable(context);
 
-        // First check for cached data
-        List<Game> cachedGames = dbHelper.getCachedGames(category, page);
+        // First check for cached data for current user
+        List<Game> cachedGames = dbHelper.getCachedGames(category, page, userId);
         if (!cachedGames.isEmpty()) {
             gamesLiveData.setValue(cachedGames);
 
             // If we're online, refresh in background
             if (isOnline) {
-                refreshPageFromNetwork(page, category, gamesLiveData);
+                refreshPageFromNetwork(page, category, gamesLiveData, userId);
             }
             return gamesLiveData;
         }
@@ -310,11 +334,11 @@ public class GameRepository {
                 public void onResponse(@NonNull Call<GameListResponse> call, @NonNull Response<GameListResponse> response) {
                     isLoading = false;
                     if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
-                        // Save to cache
-                        dbHelper.cacheGames(response.body().getResults(), category, page);
+                        // Save to cache for current user
+                        dbHelper.cacheGames(response.body().getResults(), category, page, userId);
 
                         // Convert to Game model and deliver
-                        List<Game> games = convertResponseToGames(response.body().getResults());
+                        List<Game> games = convertResponseToGames(response.body().getResults(), userId);
                         gamesLiveData.setValue(games);
                     } else {
                         gamesLiveData.setValue(null);
@@ -336,17 +360,17 @@ public class GameRepository {
         return gamesLiveData;
     }
 
-    private void refreshPageFromNetwork(int page, String category, MutableLiveData<List<Game>> liveData) {
+    private void refreshPageFromNetwork(int page, String category, MutableLiveData<List<Game>> liveData, int userId) {
         apiService.getGameList(page, Constants.PAGE_SIZE, null).enqueue(new Callback<GameListResponse>() {
             @Override
             public void onResponse(@NonNull Call<GameListResponse> call, @NonNull Response<GameListResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
-                    // Save to cache
-                    dbHelper.cacheGames(response.body().getResults(), category, page);
+                    // Save to cache for current user
+                    dbHelper.cacheGames(response.body().getResults(), category, page, userId);
 
                     // If this is not the first data delivery, update the LiveData
                     if (liveData.getValue() == null) {
-                        List<Game> games = convertResponseToGames(response.body().getResults());
+                        List<Game> games = convertResponseToGames(response.body().getResults(), userId);
                         liveData.setValue(games);
                     }
                 }
@@ -360,8 +384,143 @@ public class GameRepository {
         });
     }
 
+    // Backward compatibility wrapper
+    private void refreshPageFromNetwork(int page, String category, MutableLiveData<List<Game>> liveData) {
+        refreshPageFromNetwork(page, category, liveData, getCurrentUserId());
+    }
+
     // Perform database maintenance (call this occasionally, like on app startup)
     public void cleanupOldCache() {
         dbHelper.cleanupOldCache();
+    }
+
+    // For popular games - similar to trending games but with different category
+    public LiveData<List<Game>> getPopularGames() {
+        MutableLiveData<List<Game>> gamesLiveData = new MutableLiveData<>();
+        int userId = getCurrentUserId();
+
+        boolean isOnline = NetworkUtils.isNetworkAvailable(context);
+        String category = "popular";
+
+        if (isOnline && dbHelper.isCacheExpired("home_" + category, userId)) {
+            apiService.getGameList(1, 10, "-added").enqueue(new Callback<GameListResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<GameListResponse> call, @NonNull Response<GameListResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                        dbHelper.cacheGames(response.body().getResults(), category, 1, userId);
+                        List<Game> games = convertResponseToGames(response.body().getResults(), userId);
+                        gamesLiveData.setValue(games);
+                    } else {
+                        List<Game> cachedGames = dbHelper.getCachedGames(category, 1, userId);
+                        if (!cachedGames.isEmpty()) {
+                            gamesLiveData.setValue(cachedGames);
+                        } else {
+                            gamesLiveData.setValue(null);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<GameListResponse> call, @NonNull Throwable t) {
+                    Log.e(TAG, "Network error fetching popular games", t);
+
+                    List<Game> cachedGames = dbHelper.getCachedGames(category, 1, userId);
+                    if (!cachedGames.isEmpty()) {
+                        gamesLiveData.setValue(cachedGames);
+                    } else {
+                        gamesLiveData.setValue(null);
+                    }
+                }
+            });
+        } else {
+            List<Game> cachedGames = dbHelper.getCachedGames(category, 1, userId);
+            if (!cachedGames.isEmpty()) {
+                gamesLiveData.setValue(cachedGames);
+            } else if (isOnline) {
+                apiService.getGameList(1, 10, "-added").enqueue(new Callback<GameListResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<GameListResponse> call, @NonNull Response<GameListResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                            dbHelper.cacheGames(response.body().getResults(), category, 1, userId);
+                            List<Game> games = convertResponseToGames(response.body().getResults(), userId);
+                            gamesLiveData.setValue(games);
+                        } else {
+                            gamesLiveData.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<GameListResponse> call, @NonNull Throwable t) {
+                        gamesLiveData.setValue(null);
+                    }
+                });
+            } else {
+                gamesLiveData.setValue(null);
+            }
+        }
+
+        return gamesLiveData;
+    }
+
+    // Get platforms with user context
+    public LiveData<List<PlatformResponse.Platform>> getPlatforms() {
+        MutableLiveData<List<PlatformResponse.Platform>> platformsLiveData = new MutableLiveData<>();
+        int userId = getCurrentUserId();
+
+        boolean isOnline = NetworkUtils.isNetworkAvailable(context);
+        String categoryType = "platform";
+
+        if (isOnline && dbHelper.isCacheExpired(categoryType, userId)) {
+            apiService.getPlatforms(1, 20).enqueue(new Callback<PlatformResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<PlatformResponse> call, @NonNull Response<PlatformResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                        List<PlatformResponse.Platform> platforms = response.body().getResults();
+                        dbHelper.cacheCategories(platforms, categoryType, userId);
+                        platformsLiveData.setValue(platforms);
+                    } else {
+                        List<PlatformResponse.Platform> cachedPlatforms =
+                                dbHelper.getCachedCategories(categoryType, PlatformResponse.Platform.class, userId);
+                        platformsLiveData.setValue(cachedPlatforms.isEmpty() ? null : cachedPlatforms);
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<PlatformResponse> call, @NonNull Throwable t) {
+                    List<PlatformResponse.Platform> cachedPlatforms =
+                            dbHelper.getCachedCategories(categoryType, PlatformResponse.Platform.class, userId);
+                    platformsLiveData.setValue(cachedPlatforms.isEmpty() ? null : cachedPlatforms);
+                }
+            });
+        } else {
+            List<PlatformResponse.Platform> cachedPlatforms =
+                    dbHelper.getCachedCategories(categoryType, PlatformResponse.Platform.class, userId);
+
+            if (!cachedPlatforms.isEmpty()) {
+                platformsLiveData.setValue(cachedPlatforms);
+            } else if (isOnline) {
+                apiService.getPlatforms(1, 20).enqueue(new Callback<PlatformResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<PlatformResponse> call, @NonNull Response<PlatformResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                            List<PlatformResponse.Platform> platforms = response.body().getResults();
+                            dbHelper.cacheCategories(platforms, categoryType, userId);
+                            platformsLiveData.setValue(platforms);
+                        } else {
+                            platformsLiveData.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<PlatformResponse> call, @NonNull Throwable t) {
+                        platformsLiveData.setValue(null);
+                    }
+                });
+            } else {
+                platformsLiveData.setValue(null);
+            }
+        }
+
+        return platformsLiveData;
     }
 }
