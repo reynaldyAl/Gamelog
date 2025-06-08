@@ -202,6 +202,10 @@
     <string name="username_too_short">Username too Short! Please choose better username\n</string>
     <string name="email_exists">Email already exist! Please use another email</string>
     <string name="username_exists">Username Already Exist! Choose different username</string>
+    <string name="popular_games">Popular Games\n</string>
+    <string name="discover_games">Discover Games</string>
+    <string name="favorite">Favorite\n</string>
+    <string name="game_thumbnail">Gamemology Summary\n</string>
 
 
 </resources>

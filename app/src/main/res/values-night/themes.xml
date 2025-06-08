@@ -1,33 +1,26 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <style name="Theme.Gamemology" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color -->
+        <!-- Override only colors, not text appearances -->
         <item name="colorPrimary">@color/primary_dark_theme</item>
         <item name="colorPrimaryVariant">@color/primary_dark_variant</item>
         <item name="colorOnPrimary">@color/white</item>
 
-        <!-- Secondary brand color -->
         <item name="colorSecondary">@color/accent_dark_theme</item>
         <item name="colorSecondaryVariant">@color/accent_dark_variant</item>
-        <item name="colorOnSecondary">@color/black</item>
 
-        <!-- Status bar and navigation bar -->
         <item name="android:statusBarColor">@color/dark_surface</item>
         <item name="android:navigationBarColor">@color/dark_surface</item>
 
-        <!-- Background colors -->
         <item name="backgroundColor">@color/dark_background</item>
         <item name="colorSurface">@color/dark_surface</item>
         <item name="colorOnBackground">@color/text_primary_dark</item>
         <item name="colorOnSurface">@color/text_secondary_dark</item>
 
-        <!-- Typography and components inherit from the light theme -->
+        <!-- Text colors for night mode -->
+        <item name="android:textColorPrimary">@color/text_primary_dark</item>
+        <item name="android:textColorSecondary">@color/text_secondary_dark</item>
+        <item name="android:textColorHint">@color/text_hint_dark</item>
 
-        <!-- Make edge-to-edge layout work better -->
         <item name="android:windowLightStatusBar">false</item>
-    </style>
-
-    <!-- Base theme definition -->
-    <style name="Base.Theme.Gamemology" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here -->
     </style>
 </resources>

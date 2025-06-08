@@ -75,5 +75,14 @@
     <!-- This fixes your colorPrimary error -->
     <color name="colorPrimary">@color/blue</color>
 
+    <color name="colorPrimaryDark">@color/dark_blue</color>
+    <color name="text_hint_light">#61000000</color> <!-- 38% black -->
 
+
+    <!-- Light theme text colors -->
+
+    <color name="text_tertiary_light">#61000000</color>  <!-- 38% opacity black -->
+
+    <color name="text_tertiary_dark">#61FFFFFF</color>   <!-- 38% opacity white -->
+    <color name="text_hint_dark">#61FFFFFF</color>       <!-- 38% opacity white -->
 </resources>

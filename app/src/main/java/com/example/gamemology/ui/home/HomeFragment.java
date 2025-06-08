@@ -236,7 +236,7 @@ public class HomeFragment extends Fragment {
     private void showShimmerLoading(boolean show) {
         if (show) {
             binding.rvGames.setVisibility(View.GONE);
-            binding.emptyView.setVisibility(View.GONE);
+            binding.emptyView.getRoot().setVisibility(View.GONE); // Fixed
             binding.progressBar.setVisibility(View.GONE);
             binding.shimmerLayout.setVisibility(View.VISIBLE);
             binding.shimmerLayout.startShimmer();
@@ -255,13 +255,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void showEmptyView() {
-        binding.emptyView.setVisibility(View.VISIBLE);
+        binding.emptyView.getRoot().setVisibility(View.GONE); // Fixed
         binding.rvGames.setVisibility(View.GONE);
         binding.shimmerLayout.setVisibility(View.GONE);
     }
 
     private void showContent() {
-        binding.emptyView.setVisibility(View.GONE);
+        binding.emptyView.getRoot().setVisibility(View.GONE); // Fixed
         binding.rvGames.setVisibility(View.VISIBLE);
         binding.shimmerLayout.setVisibility(View.GONE);
     }
