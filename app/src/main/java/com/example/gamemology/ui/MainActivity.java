@@ -16,6 +16,7 @@ import com.example.gamemology.ui.favorite.FavoriteFragment;
 import com.example.gamemology.ui.home.HomeFragment;
 import com.example.gamemology.ui.profile.ProfileFragment;  // Add this import
 import com.example.gamemology.ui.search.SearchActivity;
+import com.example.gamemology.ui.settings.SettingsActivity;
 import com.example.gamemology.utils.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         // Set up bottom navigation
         binding.bottomNavigation.setOnNavigationItemSelectedListener(navListener);
 
+
         // Default fragment
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
     }
+
 
     private final BottomNavigationView.OnNavigationItemSelectedListener navListener =
             item -> {
@@ -60,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new ProfileFragment();
                     tag = Constants.TAG_PROFILE_FRAGMENT;
                     setTitle(R.string.profile);
+                } else if (itemId == R.id.action_settings) {
+                    // Launch Settings Activity
+                    startActivity(new Intent(this, SettingsActivity.class));
+                    return true;
                 }
 
                 if (selectedFragment != null) {

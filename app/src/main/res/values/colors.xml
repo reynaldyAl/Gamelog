@@ -85,4 +85,6 @@
 
     <color name="text_tertiary_dark">#61FFFFFF</color>   <!-- 38% opacity white -->
     <color name="text_hint_dark">#61FFFFFF</color>       <!-- 38% opacity white -->
+
 </resources>
+
