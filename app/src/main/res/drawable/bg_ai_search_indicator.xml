@@ -1,0 +1,12 @@
+<animated-selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="?attr/colorPrimary"
+                android:centerColor="?attr/colorSecondary"
+                android:endColor="?attr/colorPrimary"
+                android:type="linear"
+                android:angle="0"/>
+        </shape>
+    </item>
+</animated-selector>

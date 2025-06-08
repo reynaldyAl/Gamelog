@@ -208,4 +208,12 @@
     <string name="game_thumbnail">Gamemology Summary\n</string>
 
 
+    <string name="no_results">No games found</string>
+    <string name="popular">Popular</string>
+    <string name="view_fullscreen">Fullscreen\n</string>
+    <string name="achievements_empty_message">NO ACHIEVEMENT YET</string>
+
+    <string name="no_achievements_yet">No achievements yet</string>
+    <string name="check_back_later_for_achievements">Check back later to see achievements for this game</string>
+
 </resources>

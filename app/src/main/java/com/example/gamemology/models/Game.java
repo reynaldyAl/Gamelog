@@ -158,3 +158,4 @@ public class Game implements Parcelable {
         isFavorite = favorite;
     }
 }
+

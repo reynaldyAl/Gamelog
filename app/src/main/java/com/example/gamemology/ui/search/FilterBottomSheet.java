@@ -163,6 +163,8 @@ public class FilterBottomSheet extends BottomSheetDialogFragment {
             if (getArguments().containsKey("sortBy")) {
                 filterOptions.setSortBy(getArguments().getString("sortBy"));
             }
+
+
         }
 
         // Load filter options
