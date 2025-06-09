@@ -204,7 +204,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="@string/favorite_button"
-        app:tint="@android:color/white"
+        app:tint="@android:color/holo_red_light"
         app:backgroundTint="?attr/colorPrimary"
         app:rippleColor="#80FFFFFF"
         app:fabCustomSize="56dp"

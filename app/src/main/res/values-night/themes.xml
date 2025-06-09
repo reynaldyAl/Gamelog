@@ -22,5 +22,38 @@
         <item name="android:textColorHint">@color/text_hint_dark</item>
 
         <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Profile specific attributes for dark mode -->
+
+        <item name="cardBackgroundColor">@color/profile_card_background_dark</item>
+
+        <!-- These additional attributes help with proper dark mode theming -->
+        <item name="dividerColor">@color/profile_divider_dark</item>
+        <item name="colorOutline">@color/profile_divider_dark</item>
+        <!-- Add these style references for profile dark mode -->
+        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
+
+        <!-- Profile colors to reference in layouts -->
+        <item name="profileHeaderColor">@color/blue_dark_mode</item>
+        <item name="profileTextColor">@color/text_primary_dark</item>
+        <item name="profileIconTint">@color/primary_dark_theme</item>
     </style>
+
+    <!-- Dark theme card style -->
+    <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/profile_card_background_dark</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">16dp</item>
+    </style>
+
+    <!-- Dark theme profile header text style -->
+    <style name="TextAppearance.Gamemology.ProfileHeader" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/blue_dark_mode</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+
+
 </resources>

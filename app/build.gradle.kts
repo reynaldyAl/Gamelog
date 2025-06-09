@@ -99,4 +99,6 @@ dependencies {
     implementation ("com.github.dhaval2404:imagepicker:2.1")
 
     implementation ("com.google.android.material:material:1.6.0")
+
+    implementation ("com.github.chrisbanes:PhotoView:2.3.0")
 }

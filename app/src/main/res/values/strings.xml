@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">gamemology</string>
+    <string name="app_name">Gamemology</string>
 
 
     <!-- Bottom Navigation -->
@@ -216,4 +216,35 @@
     <string name="no_achievements_yet">No achievements yet</string>
     <string name="check_back_later_for_achievements">Check back later to see achievements for this game</string>
 
+
+    <!-- Strings for Edit Profile screen -->
+    <string name="photo_selected">Photo selected</string>
+    <string name="tap_to_change_photo">Tap to change photo</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="profile_privacy_note">Your email is only visible to you and will be used for account-related communications.</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="save_changes_confirmation">Are you sure you want to save these changes to your profile?</string>
+    <string name="no_changes_to_save">No changes to save</string>
+    <string name="error_saving_image">Error saving image</string>
+    <string name="database_update_failed">Failed to update profile</string>
+    <string name="database_error">Database error occurred</string>
+    <string name="saving">Saving...</string>
+
+    <!-- Auth Strings -->
+    <string name="welcome_back">Welcome back! Please sign in to continue</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="register_now">Register Now</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="logging_in">Signing in…</string>
+    <string name="registering">Creating account…</string>
+    <string name="register_subtitle">Create a new account to track your game progress</string>
+    <string name="password_helper_text">Must be at least 6 characters with letters and numbers</string>
+
+    <!-- Forgot Password strings -->
+    <string name="reset_password">Reset Password</string>
+    <string name="reset_password_instructions">Enter your email address to receive a password reset link</string>
+
+    <string name="reset_email_sent">Password reset instructions sent to %1$s</string>
+    <string name="dialog_margin" translatable="false">24dp</string>
 </resources>

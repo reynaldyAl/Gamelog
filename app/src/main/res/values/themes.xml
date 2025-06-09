@@ -49,6 +49,8 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
+
+
     </style>
 
     <!-- Splash theme -->
@@ -70,4 +72,8 @@
     <style name="Base.Theme.Gamemology" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Placeholder for future Material 3 migration -->
     </style>
+
+
+
+
 </resources>

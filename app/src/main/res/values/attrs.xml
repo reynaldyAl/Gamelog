@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Profile specific attributes -->
+    <attr name="profileHeaderColor" format="color" />
+    <attr name="profileTextColor" format="color" />
+    <attr name="profileIconTint" format="color" />
+</resources>

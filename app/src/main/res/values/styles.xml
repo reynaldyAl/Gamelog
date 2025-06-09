@@ -95,5 +95,28 @@
         <item name="android:textColor">@color/text_secondary_light</item>
     </style>
 
+    <style name="FullScreenTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+
+    <style name="Widget.App.CardView.Profile" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/profile_card_background_dark</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="contentPadding">16dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- Text style for headers in dark mode -->
+    <style name="TextAppearance.Gamemology.ProfileHeader" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/blue_dark_mode</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
 
 </resources>
