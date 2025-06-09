@@ -6,25 +6,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="?attr/backgroundColor"
     tools:context=".ui.detail.DetailActivity">
 
+    <!-- Enhanced AppBarLayout with better elevation and styling -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="320dp"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:expandedTitleTextAppearance="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:statusBarScrim="@android:color/transparent">
 
+            <!-- Game backdrop image with improved scaleType -->
             <ImageView
                 android:id="@+id/img_backdrop"
                 android:layout_width="match_parent"
@@ -32,108 +38,182 @@
                 android:contentDescription="@string/game_banner"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7"
+                tools:src="@tools:sample/backgrounds/scenic" />
 
+            <!-- Gradient overlay for better text visibility -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/gradient_scrim"
-                app:layout_collapseMode="parallax" />
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.3" />
 
+            <!-- Game details container with improved styling -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:orientation="vertical"
                 android:padding="16dp"
-                app:layout_collapseMode="parallax">
+                android:layout_marginBottom="8dp"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.3">
 
+                <!-- Game title with enhanced text appearance -->
                 <TextView
                     android:id="@+id/tv_game_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.App.TitleLarge"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
                     android:textColor="@android:color/white"
-                    tools:text="Game Title" />
+                    android:shadowColor="#80000000"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="4"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    tools:text="The Legend of Zelda: Tears of the Kingdom" />
 
+                <!-- Game info row with visual separation -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
+                    <!-- Release date with icon -->
                     <TextView
                         android:id="@+id/tv_release_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_calendar"
+                        android:drawablePadding="6dp"
+                        android:gravity="center_vertical"
                         android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        app:drawableTint="@android:color/white"
                         tools:text="Released: 2023-05-15" />
 
+                    <!-- Visual separator -->
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="16dp"
+                        android:layout_marginHorizontal="12dp"
+                        android:background="#80FFFFFF" />
+
+                    <!-- Rating with star icon -->
                     <TextView
                         android:id="@+id/tv_rating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
                         android:drawableStart="@drawable/ic_star"
-                        android:drawablePadding="4dp"
+                        android:drawablePadding="6dp"
                         android:gravity="center_vertical"
                         android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:drawableTint="#FFC107"
                         tools:text="4.5" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Enhanced toolbar with proper navigation icon tinting -->
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                app:navigationIcon="@drawable/ic_arrow_back"
+                app:navigationIconTint="@android:color/white"
+                app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
+        <!-- Enhanced TabLayout with proper icon and text display -->
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="?attr/colorPrimary"
             app:tabGravity="fill"
             app:tabMode="fixed"
-            app:tabTextAppearance="@style/TabTextAppearance" />
+            app:tabInlineLabel="true"
+            app:tabIconTint="@android:color/white"
+            app:tabSelectedTextColor="@android:color/white"
+            app:tabTextColor="#DDDDDD"
+            app:tabIndicatorColor="@android:color/white"
+            app:tabIndicatorHeight="3dp"
+            app:tabTextAppearance="@style/TabTextAppearance"
+            app:tabRippleColor="#33FFFFFF">
+
+            <!-- Pre-defined tabs to ensure icons show correctly -->
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_info"
+                android:text="@string/about" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_media"
+                android:text="@string/media" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_dlc"
+                android:text="@string/dlc" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:icon="@drawable/ic_achievement"
+                android:text="@string/achievements" />
+        </com.google.android.material.tabs.TabLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- ViewPager2 with improved behavior setting -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/backgroundColor"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <!-- Content layout container for offline state -->
+    <FrameLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:visibility="visible">
+        <!-- Content will be dynamically added -->
+    </FrameLayout>
+
+    <!-- Favorite FAB with improved styling -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="@string/favorite_button"
+        app:tint="@android:color/holo_red_light"
+        app:backgroundTint="?attr/colorPrimary"
+        app:rippleColor="#80FFFFFF"
+        app:fabCustomSize="56dp"
+        app:elevation="6dp"
         app:layout_anchor="@+id/appBarLayout"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_favorite_border" />
 
-    <FrameLayout
-        android:id="@+id/content_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible">
-        <!-- Content will be in ViewPager fragments -->
-    </FrameLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
-    <!-- Tambahkan di bawah fab_favorite -->
+    <!-- AI Assistant FAB with modern styling -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_ask_ai"
         android:layout_width="wrap_content"
@@ -141,6 +221,20 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="@string/ask_ai"
+        app:tint="@android:color/white"
+        app:backgroundTint="#9C27B0"
+        app:rippleColor="#80FFFFFF"
+        app:elevation="6dp"
+        app:borderWidth="0dp"
         app:srcCompat="@drawable/ic_ai_assistant" />
+
+    <!-- Loading indicator with improved placement -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="?attr/colorPrimary"
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

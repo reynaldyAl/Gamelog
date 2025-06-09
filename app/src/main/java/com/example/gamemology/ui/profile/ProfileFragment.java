@@ -16,6 +16,7 @@ import com.example.gamemology.database.DatabaseHelper;
 import com.example.gamemology.databinding.FragmentProfileBinding;
 import com.example.gamemology.models.User;
 import com.example.gamemology.ui.auth.LoginActivity;
+import com.example.gamemology.ui.settings.SettingsActivity;
 import com.example.gamemology.utils.Constants;
 import com.example.gamemology.utils.SessionManager;
 
@@ -63,6 +64,11 @@ public class ProfileFragment extends Fragment {
         // View favorites button - redirects to favorites tab
         binding.btnViewFavorite.setOnClickListener(v ->
                 requireActivity().findViewById(R.id.nav_favorites).performClick());
+
+        // In ProfileFragment's onViewCreated
+        view.findViewById(R.id.btn_settings).setOnClickListener(v -> {
+            startActivity(new Intent(requireContext(), SettingsActivity.class));
+        });
     }
 
     private void startEditProfileActivity() {

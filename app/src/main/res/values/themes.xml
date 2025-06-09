@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Gamemology" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color -->
@@ -20,31 +21,39 @@
         <item name="colorOnBackground">@color/text_primary_light</item>
         <item name="colorOnSurface">@color/text_secondary_light</item>
 
-        <!-- Typography -->
-        <item name="textAppearanceHeadline1">@style/TextAppearance.App.Headline1</item>
-        <item name="textAppearanceHeadline2">@style/TextAppearance.App.Headline2</item>
-        <item name="textAppearanceSubtitle1">@style/TextAppearance.App.Subtitle1</item>
-        <item name="textAppearanceBody1">@style/TextAppearance.App.Body1</item>
-        <item name="textAppearanceCaption">@style/TextAppearance.App.Caption</item>
+        <!-- Text colors explicitly defined to fix null text color issues -->
+        <item name="android:textColorPrimary">@color/text_primary_light</item>
+        <item name="android:textColorSecondary">@color/text_secondary_light</item>
+        <item name="android:textColorHint">@color/text_hint_light</item>
+        <!-- Add Material 3 to Material Components mappings -->
 
-        <!-- Card style -->
+
+        <!-- Text appearances -->
+        <item name="textAppearanceHeadline1">@style/TextAppearance.Gamemology.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.Gamemology.Headline2</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.Gamemology.Subtitle1</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Gamemology.Body1</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Gamemology.Caption</item>
+
+        <!-- Material 3 compatibility text appearances -->
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Gamemology.Body1</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Gamemology.Body2</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.Gamemology.Headline2</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.Gamemology.Subtitle1</item>
+
+        <!-- Component styles -->
         <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
-
-        <!-- Button style -->
         <item name="materialButtonStyle">@style/Widget.App.Button</item>
 
-        <!-- Make edge-to-edge layout work better -->
+        <!-- Edge-to-edge layout -->
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
+
+
     </style>
 
-    <!-- Base theme definition -->
-    <style name="Base.Theme.Gamemology" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here -->
-    </style>
-
-    <!-- Add this inside your existing themes.xml -->
+    <!-- Splash theme -->
     <style name="Theme.Gamemology.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/primary</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
@@ -57,8 +66,14 @@
         <!-- Status and navigation bar colors -->
         <item name="android:statusBarColor">@color/primary</item>
         <item name="android:navigationBarColor">@color/primary</item>
-
     </style>
+
+    <!-- Future Material 3 theme (don't use until ready to migrate) -->
+    <style name="Base.Theme.Gamemology" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Placeholder for future Material 3 migration -->
+    </style>
+
+
 
 
 </resources>

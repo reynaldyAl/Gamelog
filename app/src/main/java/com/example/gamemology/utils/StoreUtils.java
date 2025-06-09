@@ -25,36 +25,41 @@ public class StoreUtils {
             case "playstation-store":
             case "playstation":
             case "ps-store":
-                return R.drawable.ic_store_ps;
+                return R.drawable.ic_store_playstation;
 
-            case "xbox-store":
+
             case "xbox":
             case "xbox360":
             case "xbox-marketplace":
-                return R.drawable.ic_store_xbox;
+                return R.drawable.ic_xbox;
+
+            case "xbox-store":
+            case "microsoft-store":
+            case "windows-store":
+                return R.drawable.ic_microsoft_store;
 
             case "nintendo":
             case "nintendo-eshop":
-                return R.drawable.ic_store_nintendo;
+                return R.drawable.ic_nintendo;
 
             case "epic-games":
             case "epic":
-                return R.drawable.ic_store_epic;
+                return R.drawable.ic_store_epic_games;
 
             case "gog":
-                return R.drawable.ic_store_gog;
+                return R.drawable.ic_gog;
 
             case "apple-appstore":
             case "app-store":
-                return R.drawable.ic_store_apple;
+                return R.drawable.ic_apple;
 
             case "google-play":
             case "play-store":
-                return R.drawable.ic_store_google_play;
+                return R.drawable.ic_gstore;
 
             case "itch":
             case "itch.io":
-                return R.drawable.ic_store_itch;
+                return R.drawable.ic_itch;
 
             default:
                 Log.w(TAG, "Unknown store slug: " + slug + ", using generic icon");

@@ -44,6 +44,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private User currentUser;
     private Uri selectedImageUri;
+    private String originalEmail;
+    private boolean hasUnsavedChanges = false;
 
     public static final int RESULT_PROFILE_UPDATED = 101;
     private static final int PERMISSION_REQUEST_CODE = 123;
@@ -51,64 +53,109 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize binding first to avoid null pointer exceptions
         binding = ActivityEditProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Set up action bar
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.edit_profile);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+        // Set up UI components
+        setupToolbar();
 
-        sessionManager = SessionManager.getInstance(this);
-        dbHelper = DatabaseHelper.getInstance(this);
-        currentUser = sessionManager.getUser();
+        // Initialize data after UI setup
+        initializeData();
 
-        if (currentUser == null) {
-            finish();
-            return;
-        }
-
-        // Load current user data
-        binding.etUsername.setText(currentUser.getUsername());
-        binding.etEmail.setText(currentUser.getEmail());
-
-        // Load profile image if available
-        loadProfileImage();
-
-        binding.btnChangePhoto.setOnClickListener(v -> showImagePickerOptions());
-        binding.btnSave.setOnClickListener(v -> saveChanges());
+        // Set up event listeners
+        setupEventListeners();
     }
 
-private void loadProfileImage() {
-    if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().isEmpty()) {
+    private void setupToolbar() {
+        // Set up the custom toolbar instead of the action bar
+        setSupportActionBar(binding.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(R.string.edit_profile);
+        }
+
+        // Handle navigation click directly on the toolbar
+        binding.toolbar.setNavigationOnClickListener(v -> handleBackPress());
+    }
+
+    private void initializeData() {
         try {
-            File imageFile = new File(currentUser.getProfileImage());
-            if (imageFile.exists()) {
-                // Clear Glide cache before loading
-                Glide.with(this)
-                        .clear(binding.imgProfile);
-                
-                // Load the image with skipMemoryCache and diskCacheStrategy
-                Glide.with(this)
-                        .load(imageFile)
-                        .skipMemoryCache(true)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .placeholder(R.drawable.profile_placeholder)
-                        .error(R.drawable.profile_placeholder)
-                        .into(binding.imgProfile);
+            Log.d(TAG, "Initializing data");
+
+            sessionManager = SessionManager.getInstance(this);
+            dbHelper = DatabaseHelper.getInstance(this);
+            currentUser = sessionManager.getUser();
+
+            if (currentUser == null) {
+                Log.e(TAG, "Current user is null");
+                Toast.makeText(this, "Session error. Please login again.", Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
+
+            // Load current user data
+            binding.etUsername.setText(currentUser.getUsername());
+            binding.etEmail.setText(currentUser.getEmail());
+            originalEmail = currentUser.getEmail(); // Store original for change detection
+
+            // Load profile image if available
+            loadProfileImage();
+
+            Log.d(TAG, "Data initialization complete");
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error initializing data", e);
+            Toast.makeText(this, "Error loading profile data", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    private void setupEventListeners() {
+        // Button click listeners
+        binding.btnChangePhoto.setOnClickListener(v -> showImagePickerOptions());
+        binding.cardProfile.setOnClickListener(v -> showImagePickerOptions());
+        binding.tvChangePhoto.setOnClickListener(v -> showImagePickerOptions());
+        binding.btnSave.setOnClickListener(v -> validateAndSaveChanges());
+        binding.tvCancel.setOnClickListener(v -> handleBackPress());
+
+        // Text change listener to detect changes
+        binding.etEmail.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                validateEmail();
+            }
+        });
+    }
+
+    private void loadProfileImage() {
+        Log.d(TAG, "Loading profile image");
+        try {
+            if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().isEmpty()) {
+                File imageFile = new File(currentUser.getProfileImage());
+                if (imageFile.exists()) {
+                    // Load the image with proper error handling
+                    Glide.with(this)
+                            .load(imageFile)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .placeholder(R.drawable.profile_placeholder)
+                            .error(R.drawable.profile_placeholder)
+                            .into(binding.imgProfile);
+
+                    Log.d(TAG, "Profile image loaded from: " + currentUser.getProfileImage());
+                } else {
+                    Log.w(TAG, "Profile image file doesn't exist: " + currentUser.getProfileImage());
+                    binding.imgProfile.setImageResource(R.drawable.profile_placeholder);
+                }
             } else {
-                Log.w(TAG, "Profile image file doesn't exist: " + currentUser.getProfileImage());
+                Log.d(TAG, "No profile image path provided");
                 binding.imgProfile.setImageResource(R.drawable.profile_placeholder);
             }
         } catch (Exception e) {
             Log.e(TAG, "Error loading profile image", e);
             binding.imgProfile.setImageResource(R.drawable.profile_placeholder);
         }
-    } else {
-        binding.imgProfile.setImageResource(R.drawable.profile_placeholder);
     }
-}
 
     private void showImagePickerOptions() {
         if (checkPermissions()) {
@@ -280,98 +327,187 @@ private void loadProfileImage() {
             if (selectedImageUri != null) {
                 // Display the selected image
                 Glide.with(this).load(selectedImageUri).into(binding.imgProfile);
+                hasUnsavedChanges = true;
+
+                // Show immediate feedback
+                Toast.makeText(this, R.string.photo_selected, Toast.LENGTH_SHORT).show();
+
+                // Show overlay effect to indicate selection
+                binding.imgProfileOverlay.setAlpha(0.1f);
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show();
         }
     }
 
-private void saveChanges() {
-    String email = binding.etEmail.getText().toString().trim();
+    private boolean validateEmail() {
+        String email = binding.etEmail.getText().toString().trim();
 
-    // Validate inputs
-    if (TextUtils.isEmpty(email)) {
-        binding.tilEmail.setError(getString(R.string.required_field));
-        return;
+        // Clear previous errors
+        binding.tilEmail.setError(null);
+
+        // Check if email is empty
+        if (TextUtils.isEmpty(email)) {
+            binding.tilEmail.setError(getString(R.string.required_field));
+            return false;
+        }
+
+        // Check if email is valid
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            binding.tilEmail.setError(getString(R.string.invalid_email));
+            return false;
+        }
+
+        // Email is different from original
+        if (!email.equals(originalEmail)) {
+            hasUnsavedChanges = true;
+        }
+
+        return true;
     }
 
-    if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-        binding.tilEmail.setError(getString(R.string.invalid_email));
-        return;
-    }
-
-    binding.progressBar.setVisibility(View.VISIBLE);
-    binding.btnSave.setEnabled(false);
-
-    // Copy image file to app's private directory if selected
-    String profileImagePath = currentUser.getProfileImage();
-    if (selectedImageUri != null) {
-        try {
-            // First delete the old profile image if it exists
-            if (profileImagePath != null && !profileImagePath.isEmpty()) {
-                File oldFile = new File(profileImagePath);
-                if (oldFile.exists()) {
-                    if (!oldFile.delete()) {
-                        Log.w(TAG, "Could not delete old profile image: " + profileImagePath);
-                    }
-                }
-            }
-            
-            // Create a unique filename using timestamp
-            String uniqueFileName = "profile_" + currentUser.getId() + "_" + System.currentTimeMillis();
-            File destFile = FileUtils.createImageFile(this, uniqueFileName);
-            
-            FileUtils.copyFile(this, selectedImageUri, destFile);
-            profileImagePath = destFile.getAbsolutePath();
-            Log.d(TAG, "Saved profile image to: " + profileImagePath);
-        } catch (Exception e) {
-            Log.e(TAG, "Error saving profile image", e);
-            Toast.makeText(this, R.string.error_updating_profile, Toast.LENGTH_SHORT).show();
-            binding.progressBar.setVisibility(View.GONE);
-            binding.btnSave.setEnabled(true);
+    private void validateAndSaveChanges() {
+        if (!validateEmail()) {
             return;
+        }
+
+        // If there are changes, show confirmation dialog
+        if (hasUnsavedChanges || selectedImageUri != null) {
+            showSaveConfirmationDialog();
+        } else {
+            // No changes to save
+            Toast.makeText(this, R.string.no_changes_to_save, Toast.LENGTH_SHORT).show();
         }
     }
 
-    // Update user profile
-    currentUser.setEmail(email);
-    currentUser.setProfileImage(profileImagePath);
+    private void showSaveConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.save_changes)
+                .setMessage(R.string.save_changes_confirmation)
+                .setPositiveButton(R.string.save, (dialog, which) -> saveChanges())
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
 
-    int result = dbHelper.updateUserProfile(currentUser);
-    if (result > 0) {
-        // Update session with updated user
-        sessionManager.saveUser(currentUser);
+    private void saveChanges() {
+        String email = binding.etEmail.getText().toString().trim();
+
+        // Show loading state
+        showLoading(true);
+
+        // Copy image file to app's private directory if selected
+        String profileImagePath = currentUser.getProfileImage();
+        if (selectedImageUri != null) {
+            try {
+                // First delete the old profile image if it exists
+                if (profileImagePath != null && !profileImagePath.isEmpty()) {
+                    File oldFile = new File(profileImagePath);
+                    if (oldFile.exists()) {
+                        if (!oldFile.delete()) {
+                            Log.w(TAG, "Could not delete old profile image: " + profileImagePath);
+                        }
+                    }
+                }
+
+                // Create a unique filename using timestamp
+                String uniqueFileName = "profile_" + currentUser.getId() + "_" + System.currentTimeMillis();
+                File destFile = FileUtils.createImageFile(this, uniqueFileName);
+
+                FileUtils.copyFile(this, selectedImageUri, destFile);
+                profileImagePath = destFile.getAbsolutePath();
+                Log.d(TAG, "Saved profile image to: " + profileImagePath);
+            } catch (Exception e) {
+                Log.e(TAG, "Error saving profile image", e);
+                showLoading(false);
+                showErrorDialog(getString(R.string.error_saving_image), e.getMessage());
+                return;
+            }
+        }
+
+        // Update user profile
+        currentUser.setEmail(email);
+        currentUser.setProfileImage(profileImagePath);
+
+        // Save to database with retry capability
+        saveToDatabase();
+    }
+
+    private void saveToDatabase() {
+        try {
+            int result = dbHelper.updateUserProfile(currentUser);
+            if (result > 0) {
+                // Update session with updated user
+                sessionManager.saveUser(currentUser);
+                showLoading(false);
+                showSuccessAndFinish();
+            } else {
+                showLoading(false);
+                showRetryDialog(getString(R.string.database_update_failed));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Database error", e);
+            showLoading(false);
+            showRetryDialog(getString(R.string.database_error));
+        }
+    }
+
+    private void showSuccessAndFinish() {
         Toast.makeText(this, R.string.profile_updated, Toast.LENGTH_SHORT).show();
         setResult(RESULT_PROFILE_UPDATED);
         finish();
-    } else {
-        Toast.makeText(this, R.string.error_updating_profile, Toast.LENGTH_SHORT).show();
-        binding.btnSave.setEnabled(true);
     }
 
-    binding.progressBar.setVisibility(View.GONE);
-}
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+    private void showLoading(boolean isLoading) {
+        binding.loadingOverlay.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        binding.btnSave.setEnabled(!isLoading);
+    }
+
+    private void showErrorDialog(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, null)
+                .show();
+    }
+
+    private void showRetryDialog(String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.error_updating_profile)
+                .setMessage(message)
+                .setPositiveButton(R.string.retry, (dialog, which) -> saveToDatabase())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> binding.btnSave.setEnabled(true))
+                .show();
+    }
+
+    private boolean checkForChanges() {
+        if (selectedImageUri != null) {
             return true;
         }
-        return super.onOptionsItemSelected(item);
+
+        String currentEmail = binding.etEmail.getText().toString().trim();
+        return !currentEmail.equals(originalEmail);
+    }
+
+    private void handleBackPress() {
+        if (checkForChanges()) {
+            showDiscardChangesDialog();
+        } else {
+            finish();
+        }
+    }
+
+    private void showDiscardChangesDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.discard_changes)
+                .setMessage(R.string.discard_changes_message)
+                .setPositiveButton(R.string.discard, (dialog, which) -> finish())
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     @Override
     public void onBackPressed() {
-        if (selectedImageUri != null) {
-            // Changes were made but not saved
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.discard_changes)
-                    .setMessage(R.string.discard_changes_message)
-                    .setPositiveButton(R.string.discard, (dialog, which) -> super.onBackPressed())
-                    .setNegativeButton(R.string.cancel, null)
-                    .show();
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
+        handleBackPress();
     }
 }

@@ -2,10 +2,16 @@ package com.example.gamemology.ui.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.gamemology.R;
@@ -53,6 +59,11 @@ public class LoginActivity extends AppCompatActivity {
         binding.tvRegisterPrompt.setOnClickListener(view -> {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
+
+        // Forgot Password click handler
+        binding.tvForgotPassword.setOnClickListener(view -> {
+            showPasswordResetDialog();
+        });
     }
 
     private void loginUser() {
@@ -93,5 +104,43 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    // Add this as a new method in your LoginActivity class
+
+    private void showPasswordResetDialog() {
+        // Create an EditText for the dialog
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        input.setHint(R.string.email);
+
+        // Use FrameLayout with padding for better UI
+        FrameLayout container = new FrameLayout(this);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+        input.setLayoutParams(params);
+        container.addView(input);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.reset_password)
+                .setMessage(R.string.reset_password_instructions)
+                .setView(container)
+                .setPositiveButton(R.string.send, (dialog, which) -> {
+                    String email = input.getText().toString().trim();
+                    if (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        // Here you would implement actual password reset logic
+                        // For now, just show a confirmation message
+                        Toast.makeText(LoginActivity.this,
+                                getString(R.string.reset_email_sent, email), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(LoginActivity.this,
+                                R.string.invalid_email, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 }

@@ -75,5 +75,29 @@
     <!-- This fixes your colorPrimary error -->
     <color name="colorPrimary">@color/blue</color>
 
+    <color name="colorPrimaryDark">@color/dark_blue</color>
+    <color name="text_hint_light">#61000000</color> <!-- 38% black -->
 
+
+    <!-- Light theme text colors -->
+
+    <color name="text_tertiary_light">#61000000</color>  <!-- 38% opacity black -->
+
+    <color name="text_tertiary_dark">#61FFFFFF</color>   <!-- 38% opacity white -->
+    <color name="text_hint_dark">#61FFFFFF</color>       <!-- 38% opacity white -->
+
+    <!-- Profile specific colors -->
+    <color name="profile_background">#F5F5F5</color>
+    <color name="blue_light">#E3F2FD</color>
+
+    <!-- Profile specific colors for dark mode -->
+    <color name="profile_background_dark">#121212</color>
+    <color name="profile_card_background_dark">#1E1E1E</color>
+    <color name="profile_icon_background_dark">#1A2F3F</color>
+    <color name="profile_header_start_dark">#0D47A1</color>
+    <color name="profile_header_end_dark">#052350</color>
+    <color name="blue_dark_mode">#64C1FF</color>
+    <color name="dark_blue_dark_mode">#90CAF9</color>
+    <color name="profile_divider_dark">#2F2F2F</color>
 </resources>
+
