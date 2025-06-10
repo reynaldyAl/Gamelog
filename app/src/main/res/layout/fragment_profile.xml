@@ -82,7 +82,7 @@
                         android:background="?attr/colorSurface"
                         app:shapeAppearanceOverlay="@style/CircleImageView"
                         android:contentDescription="@string/profile_image"
-                        app:strokeColor="?attr/colorSurface"
+                        app:strokeColor="@color/blue_light"
                         app:strokeWidth="3dp" />
 
                     <!-- Edit photo button with improved visuals -->

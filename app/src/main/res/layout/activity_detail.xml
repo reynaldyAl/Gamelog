@@ -59,6 +59,7 @@
                 android:orientation="vertical"
                 android:padding="16dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginEnd="56dp"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.3">
 
@@ -121,6 +122,20 @@
                         tools:text="4.5" />
                 </LinearLayout>
             </LinearLayout>
+
+            <!-- Simplified favorite icon using ImageView -->
+            <ImageView
+                android:id="@+id/fab_favorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/favorite_button"
+                android:padding="6dp"
+                app:layout_collapseMode="parallax"
+                app:tint="@android:color/holo_red_light"
+                android:src="@drawable/ic_favorite_border" />
 
             <!-- Enhanced toolbar with proper navigation icon tinting -->
             <androidx.appcompat.widget.Toolbar
@@ -197,22 +212,6 @@
         <!-- Content will be dynamically added -->
     </FrameLayout>
 
-    <!-- Favorite FAB with improved styling -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/favorite_button"
-        app:tint="@android:color/holo_red_light"
-        app:backgroundTint="?attr/colorPrimary"
-        app:rippleColor="#80FFFFFF"
-        app:fabCustomSize="56dp"
-        app:elevation="6dp"
-        app:layout_anchor="@+id/appBarLayout"
-        app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/ic_favorite_border" />
-
     <!-- AI Assistant FAB with modern styling -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_ask_ai"
@@ -222,7 +221,7 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/ask_ai"
         app:tint="@android:color/white"
-        app:backgroundTint="#9C27B0"
+        app:backgroundTint="@color/blue"
         app:rippleColor="#80FFFFFF"
         app:elevation="6dp"
         app:borderWidth="0dp"
