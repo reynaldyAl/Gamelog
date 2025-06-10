@@ -5,7 +5,7 @@ public class Constants {
     public static final int PAGE_SIZE = 20;
 
     // API key - ganti dengan API key yang sebenarnya
-    public static final String RAWG_API_KEY = "03d5b08e640a4ba08c2d8dffa0f5ebae";
+    public static final String RAWG_API_KEY = "Insert Your API Key Here (Rawg API)";
 
     // Tambahkan konstanta berikut di class Constants
     public static final String TAG_PROFILE_FRAGMENT = "profile_fragment";

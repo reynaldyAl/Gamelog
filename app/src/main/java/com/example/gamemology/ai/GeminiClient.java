@@ -16,7 +16,7 @@ import java.util.concurrent.Executor;
 
 public class GeminiClient {
     private static final String TAG = "GeminiClient";
-    private static final String API_KEY = "AIzaSyAnfi0liR8acFKifQTLEtkD2N2lOzFxhGI"; // Replace with your API key
+    private static final String API_KEY = "Insert Your Gemini Api Key here"; // Replace with your API key
     private static final String MODEL_NAME = "models/gemini-2.0-flash";
 
     private final GenerativeModelFutures model;
