@@ -1,6 +1,6 @@
 <div align="center">
 <div align="center">
-  <img src="screenshots/gamemology_icon" alt="Gamemology Icon" width="800"/>
+  <img src="screenshots/gamemology_icon.jpg" alt="Gamemology Icon" width="70"/>
 </div>
   <h1>Gamemology</h1>
   <p><i>Discover, Track, and Master Your Game Collection</i></p>
@@ -378,7 +378,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Game data provided by [RAWG Video Games Database](https://rawg.io/)
 - AI assistance powered by [Google Gemini API](https://ai.google.dev/)
