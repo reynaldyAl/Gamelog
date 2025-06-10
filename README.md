@@ -1,5 +1,7 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/reynaldyal/gamemology/main/app/src/main/res/drawable/gamemology_banner.png" alt="Gamemology Banner" width="800"/>
+<div align="center">
+  <img src="screenshots/gamemology_icon" alt="Gamemology Icon" width="800"/>
+</div>
   <h1>Gamemology</h1>
   <p><i>Discover, Track, and Master Your Game Collection</i></p>
   
@@ -85,17 +87,54 @@ Our modern Material Design 3 UI ensures a seamless, visually appealing experienc
 <div align="center">
 <table>
   <tr>
-    <td><img src="https://raw.githubusercontent.com/reynaldyal/gamemology/main/screenshots/home_screen.jpg" alt="Home Screen" width="200"/></td>
-    <td><img src="https://raw.githubusercontent.com/reynaldyal/gamemology/main/screenshots/detail_screen.jpg" alt="Game Details" width="200"/></td>
-    <td><img src="https://raw.githubusercontent.com/reynaldyal/gamemology/main/screenshots/profile_screen.jpg" alt="Profile Screen" width="200"/></td>
-    <td><img src="https://raw.githubusercontent.com/reynaldyal/gamemology/main/screenshots/home_screen.jpg" alt="Home Screen" width="200"/></td>
-    <td><img src="https://raw.githubusercontent.com/reynaldyal/gamemology/main/screenshots/detail_screen.jpg" alt="Game Details" width="200"/></td>
-    <td><img src="https://raw.githubusercontent.com/reynaldyal/gamemology/main/screenshots/profile_screen.jpg" alt="Profile Screen" width="200"/></td>
+    <td><img src="screenshots/login_view.jpg" alt="Login Screen" width="200"/></td>
+    <td><img src="screenshots/register_view.jpg" alt="Registration Screen" width="200"/></td>
+    <td><img src="screenshots/home_screen.jpg" alt="Home Screen" width="200"/></td>
   </tr>
   <tr>
-    <td align="center"><b>Home Screen</b></td>
+    <td align="center"><b>Login</b></td>
+    <td align="center"><b>Register</b></td>
+    <td align="center"><b>Home</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/search_view.jpg" alt="Search Screen" width="200"/></td>
+    <td><img src="screenshots/advanced_search.jpg" alt="Advanced Search" width="200"/></td>
+    <td><img src="screenshots/detail_view.jpg" alt="Game Details" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Search</b></td>
+    <td align="center"><b>Advanced Search</b></td>
     <td align="center"><b>Game Details</b></td>
-    <td align="center"><b>Profile Screen</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/detail_view_v2.jpg" alt="Game Detail v2" width="200"/></td>
+    <td><img src="screenshots/favorite_view.jpg" alt="Favorite View" width="200"/></td>
+    <td><img src="screenshots/profile_view.jpg" alt="Profile" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Game Details Alt</b></td>
+    <td align="center"><b>Favorites</b></td>
+    <td align="center"><b>Profile</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/edit_profile_view.jpg" alt="Edit Profile" width="200"/></td>
+    <td><img src="screenshots/ai_assistent.jpg" alt="AI Assistant" width="200"/></td>
+    <td><img src="screenshots/ai_assistant_context.jpg" alt="AI Context" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Edit Profile</b></td>
+    <td align="center"><b>AI Assistant</b></td>
+    <td align="center"><b>AI Contextual Help</b></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/settings.jpg" alt="Settings" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Settings</b></td>
+  </tr>
+
+  <tr>
+    <td align="center"><b>Home Screen</b></td>
   </tr>
 </table>
 </div>
@@ -250,7 +289,7 @@ The app will be available on Google Play Store soon. For now, you can:
 
 1. Clone the repository:
    bash
-   git clone https://github.com/reynaldyal/gamemology.git
+   git clone https://github.com/reynaldyAl/Gamelog.git
    
 
 2. Open the project in Android Studio
@@ -277,6 +316,7 @@ Create a secrets.properties file in the project root with:
 properties
 RAWG_API_KEY=your_rawg_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
+or Insert Your API in fields that required API KEY (Constant and AI)
 
 
 ## 📚 Dependencies
@@ -348,8 +388,17 @@ limitations under the License.
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📞 Contact
+## Contact
 
 - *Developer*: Reynaldy AL
 - *Institution*: Information System 2023 - Hasanuddin University
 - *GitHub*: [Reynaldy AL](https://github.com/reynaldyAl)
+
+
+<div align="center">
+
+  <h1><i>INGIN MENJADI PROGRAMMER HANDAL NAMUN ENGGAN NGODING</i></h1>
+  <p><i>"Mau kerja di tambang - God please, be my Luck"</i></p>
+  
+
+</div>
