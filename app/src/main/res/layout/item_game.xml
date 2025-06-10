@@ -84,7 +84,8 @@
             android:padding="6dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white"
+            app:tint="@color/rating_bad"
+            app:strokeColor="@color/white"
             tools:src="@drawable/ic_favorite_border" />
 
         <TextView
