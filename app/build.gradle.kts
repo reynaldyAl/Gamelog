@@ -16,7 +16,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Define API key directly
-        buildConfigField("String", "RAWG_API_KEY", "\"03d5b08e640a4ba08c2d8dffa0f5ebae\"")
+        buildConfigField("String", "RAWG_API_KEY", "\"Insert Your RawG API Here\"")
     }
 
     buildTypes {
